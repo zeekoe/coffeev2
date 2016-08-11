@@ -14,12 +14,12 @@ def gpiocb(gpio, level, tick):
 	gpiostate[gpio] = level
 
 
-def gpiomaalcb(gpio, level, tick):
+def gpiomaalcb(gpio, level, tick): # call back for grinder pulse
 	global maalteller
 	if level == 0 and maalteller > 0:
 		maalteller -= 1
 
-def gpiopompcb(gpio, level, tick):
+def gpiopompcb(gpio, level, tick): # call back for flow meter (water pump) pulse
 	global pompteller
 	pompteller += 1
 
@@ -46,7 +46,7 @@ class myhal:
 		self.pi.callback(22, pigpio.FALLING_EDGE, startcb) # start button
 		self.pi.callback(4, pigpio.EITHER_EDGE, gpiocb) # thirsty
 		self.pi.callback(24, pigpio.EITHER_EDGE, gpiomaalcb) # grinder
-		self.pi.callback(31, pigpio.FALLING_EDGE, gpiopompcb)
+		self.pi.callback(31, pigpio.FALLING_EDGE, gpiopompcb) # flow meter after pump
 	def getIsReal(self):
 		return 1
 	def getGpioValue(self, gpio):
