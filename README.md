@@ -17,3 +17,8 @@ Check the defaults directory.
 
 # Firmware
 Read https://hackaday.io/project/12688-coffee-machine-v2/log/41952-ronaldboard-isp-programming-i2c-communication for the background and the neccesary files
+
+# Licence
+* software/avt.py is public domain, unknown licence (from https://github.com/NS-API/Python-API)
+* firmware/twi* is licenced under 'GNU General Public Licence'
+* all other code is either mine or very trivial, and published under GPLv3
