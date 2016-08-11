@@ -91,3 +91,8 @@ ENV/
 # project specific files
 koffie.db
 koffie.db.*
+
+# c files
+*.hex
+*.bin
+*.o

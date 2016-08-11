@@ -1,0 +1,5 @@
+#!/bin/bash
+sudo modprobe i2c-bcm2708 baudrate=10000
+sudo modprobe i2c_dev
+sudo pigpiod
+pigs pud 4 u
