@@ -6,3 +6,10 @@ The dummy environment (automatically chosen if architecture != armv6l) allows fo
 * w, q: state switch buttons
 * 1,2,3,4,5: number buttons
 * space bar: start button
+* 
+# Installation
+Check the defaults directory.
+
+# Work in progress
+* Most texts and variables were originally written in Dutch. Some are already translated to English.
+* In an initial version, the MPD client connected to an MPD server on the Pi itself, while the files were accessed over CIFS/SMB. Currently, it connects to an MPD server on a different computer, and uses snapserver/snapclient to play music in sync on both computers. Code for both still is in the repository.
