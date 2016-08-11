@@ -3,19 +3,22 @@ import os, sys, pygame, signal, datetime, time, math, httplib2, socket, re, plat
 from pygame.locals import *
 from array import *
 
+# load modules
 from sysd import SysD
 from nsdisplay import NSDisplay
 from koffiezetter import Koffiezetter
 from mpdisplay import MPDisplay
 
+# autodetect if we are on the real platform, or in simulation mode
 if platform.machine()=='armv6l':
 	from myhal import myhal
 else:
 	from myhald import myhal
 
+# callback for the "Start" button. Depending on the displayed screen, the button press is redirected to the correct module.
 def startcb(gpio, level, tick):
 	print("startcb",gpio,level)
-	time.sleep(.1)
+	time.sleep(.1) # debounce
 	level = myhal.getStartValue()
 	if(level == 0):
 		uiState = myhal.getStateSwitch()
@@ -37,7 +40,7 @@ def startcb(gpio, level, tick):
 
 myhal = myhal(startcb)
 
-
+# Ctrl+C is pressed or some other error; stop pumping and everything if something goes wrong. I implemented this quite soon while developing. ;-)
 def sigint_handler(signum, frame):
 	global myhal
 	print("Interrupt! Stop the pump!")
@@ -55,7 +58,7 @@ else:
 	screen = pygame.display.set_mode((480, 236));
 pygame.display.set_caption('Koffie!')
 pygame.mouse.set_visible(0)
-pygame.mixer.quit()
+pygame.mixer.quit() # this saves >25% CPU...
 
 background = pygame.Surface(screen.get_size())
 background = background.convert()
@@ -76,14 +79,14 @@ uiState = 0
 nsd = None
 
 while 1:
-	clock.tick(4)
+	clock.tick(4) # screen refresh rate / clock tick are fixed to 4 FPS
 	try:
 		koffiezetter.update()
 	except Exception, e:
 		myhal.stopAll()
 		print "Error in koffiezetter-update, stop everything: " + str(e)
 	try:
-		uiState = myhal.getStateSwitch()
+		uiState = myhal.getStateSwitch() # find display mode (uiState) from buttons
 	except Exception, e:
 		print "Waarschuwing: " + str(e)
 	if uiState == 0:
