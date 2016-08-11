@@ -30,7 +30,7 @@ class MPDisplay:
 		self.kp = KProgressBar(self.scherm,0,0,20,236,1000)
 		self.kp.setColors((0,128,255),(0,255,255))
 
-	def copyTo(self, newip):
+	def copyTo(self, newip): # copy current song + position to different server
 		print "start copyTo"
 		if(self.c2 == None):
 			self.c2 = MPDClient()               # create client object
@@ -57,7 +57,7 @@ class MPDisplay:
 		#print self.c.status()['elapsed']
 		#print self.c2.status()['elapsed']
 
-	def updateList(self):
+	def updateList(self): # update list of directories / songs
 		self.dirs = ['Afspelen']
 		if self.pos != "":
 			self.dirs.append('Omhoog')
@@ -69,7 +69,7 @@ class MPDisplay:
 	def quit(self):
 		self.c.close()                     # send the close command
 		self.c.disconnect()                # disconnect from the server
-	def knop(self):
+	def knop(self): # handle button press
 		if(self.fn == 'schermwissel'):
 			if(time.time() - self.modets) > 1:
 				self.mode = abs(self.mode - 1)
@@ -86,7 +86,7 @@ class MPDisplay:
 				if(self.myhal.getIsReal() == False):
 					break
 			if(self.fn == 'afspelen'):
-				if self.curListItem == 'Omhoog':
+				if self.curListItem == 'Omhoog': # up a level
 					self.pos = ''
 					self.updateList()
 				else:
@@ -94,7 +94,7 @@ class MPDisplay:
 					self.updateList()
 					print self.pos
 					print len(self.dirs)
-				if self.curListItem == 'Afspelen' or len(self.dirs) < 4:
+				if self.curListItem == 'Afspelen' or len(self.dirs) < 4: # play if the 'Play' entry is selected, or if the only sub directories are '.', '..' and one 'real' dir.
 					self.c.clear()
 					print self.pos
 					self.c.add(self.pos)
@@ -127,10 +127,10 @@ class MPDisplay:
 	def update(self):
 		self.ticker += 1
 		if self.ticker % 4 == 0:
-			if os.system("ps -A | grep snapclient") != 0:
+			if os.system("ps -A | grep snapclient") != 0: # check if snapclient is still running
 				print "start snapclient"
 				os.system("sudo snapclient -d -h 192.168.1.8")
-			if os.system("mount |grep music") == 0:
+			if os.system("mount |grep music") == 0: # check dir mount state (smb/cifs) and show scroll bar color
 				self.kp.setColors((0,128,255),(0,255,255))
 			else:
 				self.kp.setColors((0,128,255),(255,0,0))
@@ -201,7 +201,7 @@ class MPDisplay:
 	def drawfn(self):
 		self.drawfnlist(self.fnlist,self.fn)
 
-	def drawfnlist(self,fnlist,selected):
+	def drawfnlist(self,fnlist,selected): # menu items (reorder for weird turn button numbering :-))
 		font = pygame.font.Font(None, 18)
 		pos = 0
 		if self.myhal.getIsReal() == False:
