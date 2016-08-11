@@ -1,5 +1,5 @@
 # Coffee machine v2
-Coffee machine v2 source code.
+Coffee machine v2 source code. Check https://hackaday.io/project/12688-coffee-machine-v2/ for info.
 
 # Dummy environment controls
 The dummy environment (automatically chosen if architecture != armv6l) allows for simulating the coffee machine on a desktop computer. The following buttons can be used to control it:
