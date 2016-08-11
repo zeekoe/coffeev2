@@ -26,12 +26,12 @@ exit;
 	//print "Token opgehaald: <br>" . $token . "<br>";
 	$token = friemelToken($token);
 	
-	#url = "probeer url: " + "http://ida.omroep.nl/aapi/?callback=jQuery18308831475791569496_1428082441201&type=jsonp&stream=http://livestreams.omroep.nl/live/npo/tvlive/ned"+channel+"/ned"+channel+".isml/ned"+channel+"-audio=128000-video=700000.m3u8&token=%s&version=4.0" % (token)
-	# GET /aapi/?callback=jQuery18306757661136888681_1440684352682&type=jsonp&stream=http://livestreams.omroep.nl/live/npo/tvlive/ned1/ned1.isml/ned1.m3u8&token=8i0n188o7l6cgibiub22s422r3&version=5.1.0&_=1440684354971 HTTP/1.1\r\n
+	//url = "probeer url: " + "http://ida.omroep.nl/aapi/?callback=jQuery18308831475791569496_1428082441201&type=jsonp&stream=http://livestreams.omroep.nl/live/npo/tvlive/ned"+channel+"/ned"+channel+".isml/ned"+channel+"-audio=128000-video=700000.m3u8&token=%s&version=4.0" % (token)
+	// GET /aapi/?callback=jQuery18306757661136888681_1440684352682&type=jsonp&stream=http://livestreams.omroep.nl/live/npo/tvlive/ned1/ned1.isml/ned1.m3u8&token=8i0n188o7l6cgibiub22s422r3&version=5.1.0&_=1440684354971 HTTP/1.1\r\n
 	
 	$url = "http://ida.omroep.nl/aapi/?callback=jQuery18306757661136888681_1440684352682&type=jsonp&stream=http://livestreams.omroep.nl/live/npo/tvlive/ned".$kanaal."/ned".$kanaal.".isml/ned".$kanaal.".m3u8&token=".$token."&version=5.1.0&_=" . ( date('U') * 1000 - 3504);
 
-	#url = "http://ida.omroep.nl/aapi/?callback=jQuery18306757661136888681_1440684352682&type=jsonp&stream=http://livestreams.omroep.nl/live/npo/tvlive/ned"+channel+"/ned"+channel+".isml/ned"+channel+"-audio=128000-video=700000.m3u8&token=%s&version=5.1.0&_=%d"
+	//url = "http://ida.omroep.nl/aapi/?callback=jQuery18306757661136888681_1440684352682&type=jsonp&stream=http://livestreams.omroep.nl/live/npo/tvlive/ned"+channel+"/ned"+channel+".isml/ned"+channel+"-audio=128000-video=700000.m3u8&token=%s&version=5.1.0&_=%d"
 	//print "probeer url: ". $url."\n";
 	$response = implode('',file($url));
 	if($response === NULL)
@@ -44,28 +44,32 @@ exit;
 	$response = implode('',file($newurl));
 	if($response === NULL)
 		die('fout4');
-	#response = 'setSource("http:\/\/l2cmde7ca8fc9a00551ed257000000.e0e5ecb0e1884f37.kpnsmoote1a.npostreaming.nl\/d\/live\/npo\/tvlive\/ned2\/ned2.isml\/ned2.m3u8")'
+	//response = 'setSource("http:\/\/l2cmde7ca8fc9a00551ed257000000.e0e5ecb0e1884f37.kpnsmoote1a.npostreaming.nl\/d\/live\/npo\/tvlive\/ned2\/ned2.isml\/ned2.m3u8")'
 	preg_match('/setSource\("(http.*?)"\)/', $response, $matches3);
 	$url = str_replace('\\/','/',$matches3[1]);
 	$url = str_replace('ned' . $kanaal . '.m3u8', 'ned' . $kanaal . '-audio=128000-video=700000.m3u8',$url);
 	//print "Stream url: " . $url."\n";
 
-	preg_match('/http:\/\/.*?\.nl/', $url,$matches4);
-	$url_base = $matches4[0];
-	print "Stream url: " . $url_base."\n";
+	preg_match('/http:\/\/.*?\:/', $url,$matches4);
+	$url_base = substr($matches4[0],0,strlen($matches4[0])-1);
+
+	preg_match('/http:\/\/.*\/ned'.$kanaal.'-audio/', $url,$matches5);
+	$stream_url_base = substr($matches5[0],0,strlen($matches5[0])-11);
+	//print "Stream url: " . $stream_url_base."\n";
+
+$headers = "Host: ".substr($url_base,7)."
+User-Agent: VLC/2.2.2 LibVLC/2.2.2
+Range: bytes=0-
+Connection: close
+Icy-MetaData: 1
+";
 
 
 $opts = array('http' => array(
 	'method' => "GET",
-	'header' => "Host: ".substr($url_base,7)."
-User-Agent: VLC/2.2.1 LibVLC/2.2.1
-Range: bytes=0-
-Connection: close
-Icy-MetaData: 1
-",'timeout' => 300));
+	'header' => $headers,'timeout' => 300));
 $context = stream_context_create($opts);  
-//	echo '<pre>';
-//	var_dump($opts);
+	//echo '<pre>';
 
 	$tv = $kanaal;
 	
@@ -76,16 +80,21 @@ $context = stream_context_create($opts);
 		foreach($f as $r) {
 			//$f = file('/tmp/tv'); 
 			if(substr($r,0,1) != '#') {
-				$tvurl = trim($url_base."/d/live/npo/tvlive/ned".$tv."/ned".$tv.".isml/" . $r);
-				//$ch = curl_init($url);
-				//curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); 
+				$tvurl = trim($stream_url_base."/" . $r);
 				if(array_key_exists($r,$tvdata)) {
 //					echo "sleeping\n";
 					sleep(5);
 				}
 				else {
-					$dummy = file_get_contents($tvurl, false, $context);
+					// echo "<br />wget ".$tvurl."<br />";
+					// $dummy = file_get_contents($tvurl, false, $context);
+					$ch = curl_init($tvurl);
+					//curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); 
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+					$dummy = curl_exec($ch);
 					echo $dummy;
+					//var_dump($dummy);
+//exit;
 //					echo "vlc \"".$tvurl."\"\n";
 					$tvdata[$r] = 1;
 				}
