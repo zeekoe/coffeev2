@@ -33,10 +33,11 @@ class Koffiezetter:
 			print "Already started!"
 			return
 		self.aantal_koppen = aantal
-		maalteller = self.myhal.getMaalteller()
+		maalteller = self.myhal.getMaalteller() # get grinder count
 		print("Start " + str(self.aantal_koppen))
 		self.botsender("Starting to brew " + str(self.aantal_koppen) + " cups of coffee.",0)
 		zt = self.aantal_koppen * 110 + 10
+		# AutoBaristaScripts defined; Z = add hot water; M = grind; S = sleep
 		if self.aantal_koppen == 1:
 			self.programma = ['Z8','M135','Z16','S60','Z120'] # 46, 780/783
 			return
@@ -53,20 +54,22 @@ class Koffiezetter:
 			self.programma = ['Z8'] #['Z100','S50','Z100','S200','Z100','S50','Z100','S10','Z10','S10','Z10','S340','Z400']
 			return
 
-	def updateUi(self):
+	def updateUi(self): # update all UI elements
 		self.tempv.update()
 		self.kp1.update(self.myhal.getMaalteller())
 		self.kk.update()
 		self.kp2.update(self.zettijd)
 		self.pijl.update(self.zettijd)
 
+		# Currently, water amount is still time-based. For debugging, show flow meter count on screen.
 		font = pygame.font.Font(None, 36)
 		text = font.render(str(self.myhal.getPompteller()), 0, (10, 10, 10))
 		self.scherm.blit(text, (200,15))
 	
-	def update(self):
+	def update(self): # every 1/4 second, this routine is called
 		if len(self.programma) > 0 and self.bezig != self.programma[0]:
 			self.bezig = self.programma[0]
+			# first character of program defines action; check what action we are doing now.
 			if self.bezig[0] == 'M':
 				n = int(self.bezig[1:])
 				print 'maal: ', n
@@ -85,10 +88,10 @@ class Koffiezetter:
 				self.zettijd = n
 				self.kp2.setMaxval(n)
 
-		if len(self.bezig) == 0:
+		if len(self.bezig) == 0: # no actions left? return.
 			return
 
-		if self.knipper < 4 or self.myhal.getDorst() == 1:
+		if self.knipper < 4 or self.myhal.getDorst() == 1: # fancy light flashing :)
 			self.myhal.setLight(1)
 		else:
 			self.myhal.setLight(0)
@@ -100,23 +103,25 @@ class Koffiezetter:
 
 		if self.bezig[0] == 'M' and maalteller < 1:
 			self.myhal.stopGrind()
-			self.programma.pop(0)
+			self.programma.pop(0) # next script item
 			self.myhal.setMaalteller(0)
 
 		if self.bezig[0] == 'Z':
 			# font = pygame.font.Font(None, 36)
 			# text = font.render("Tijd: " + str(self.zettijd), 1, (10, 10, 10))
 			# self.scherm.blit(text, (40,40))
-			return self.boilcheck()
+			return self.boilcheck() # boiling & pumping control gets a separate subroutine
 		
 		if self.bezig[0] == 'S':
 			self.zettijd -= 1
 			if self.zettijd < 1:
-				self.programma.pop(0)
+				self.programma.pop(0) # next script item
 
 	def boilcheck(self):
 		print self.bezig, self.zettijd
 		temperatuur = self.myhal.getTemperature()
+		# some trial & error control engineering to get water of the right temperature
+		# (temperatures are somewhat in degrees celcius, but no accurate calibration is done)
 		if(self.zettijd > 0):
 			if(temperatuur > 92 or self.zettijd < 10) and self.myhal.getDorst() == 0:
 				self.myhal.doPump()
@@ -132,9 +137,9 @@ class Koffiezetter:
 		else:
 			self.myhal.stopAll()
 			self.myhal.setLight(0)
-			self.programma.pop(0)
+			self.programma.pop(0)  # next script item
 			self.bezig = ''
-			if len(self.programma) == 0 and self.aantal_koppen != 5:
+			if len(self.programma) == 0 and self.aantal_koppen != 5: # finished & not descaling? store # of cups
 				try:
 					con = sqlite.connect("/home/pi/code/koffiepy/koffie.db", detect_types=sqlite.PARSE_COLNAMES)
 					cur = con.cursor()
@@ -142,29 +147,30 @@ class Koffiezetter:
 					con.commit()
 					cur.close()
 					con.close()
-                            		os.system("sync")
+                                        os.system("sync")
 				except Exception, e:
 					print "Error writing to database: " + str(e)
 		
 				while self.aantal_koppen > 0:
-					self.myhal.doCount()
+					self.myhal.doCount() # physical counter
 					self.aantal_koppen -= 1
 				try:
 					#resp, content = self.http.request("2.php?&aantal=" + str(self.aantal_koppen) + "&datum=" + datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
 					self.botsender("Coffee is finished! Enjoy!",0)
-					resp, content = self.http.request(self.coffee_set_url)
+					resp, content = self.http.request(self.coffee_set_url) # ask internet server to pull db change from machine
+
 				except Exception, e:
 					print e
 		return self.zettijd
 	def handle_bot_message(self, message):
 		if 'cup of coffee' in message.text.lower():
 			self.start(1)
-		else if 'two cups of coffee' in message.text:
+		elif 'two cups of coffee' in message.text:
 			self.start(2)
-		else if message.text.lower() == 'coffee':
+		elif message.text.lower() == 'coffee':
 			self.start(1)
 
-class KoffieKorrel:
+class KoffieKorrel: # drawing of random coffee dust
 	def __init__(self, scherm1, myhal1):
 		self.scherm = scherm1
 		self.myhal = myhal1
@@ -180,7 +186,7 @@ class KoffieKorrel:
 			self.scherm.blit(self.korrel,(100+randrange(-5,5),100+randrange(-15,18)))
 	
 
-class Pijltjes:
+class Pijltjes: # moving arrows while pumping (needs improvement)
 	def __init__(self, scherm1, myhal1):
 		self.scherm = scherm1
 		self.myhal = myhal1
@@ -196,7 +202,7 @@ class Pijltjes:
 			self.cnt = (self.cnt + 1) % 3
 		self.scherm.blit(self.pijl,(300-2*self.cnt,199))
 
-class TemperatureView:
+class TemperatureView: # rectangle changes from blue to red
 	def __init__(self, koffiezetter):
 		self.koffiezetter = koffiezetter
 	def update(self):
