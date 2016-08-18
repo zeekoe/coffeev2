@@ -10,3 +10,5 @@ echo "@xset -dpms"
 echo ""
 echo "Run cp koffie_empty.db ../koffie.db"
 echo "Run cp local_settings_example.py ../local_settings.py"
+
+echo "pip install pyTelegramBotAPI"
