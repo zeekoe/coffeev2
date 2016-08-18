@@ -208,21 +208,21 @@ class TemperatureView: # rectangle changes from blue to red
 	def update(self):
 		font = pygame.font.Font(None, 36)
 		font2 = pygame.font.Font(None, 72)
-		tmp = self.myhal.getTemperature()
+		tmp = self.koffiezetter.myhal.getTemperature()
 		red = tmp*2.55
 		if red > 254:
 			red = 254
 		blue = 255-red
 
-		pygame.draw.rect(koffiezetter.scherm, (red,0,blue), (217,100,18,50),0)
-		if koffiezetter.myhal.getDorst() == 1:
-			koffiezetter.myhal.setLight(1)
+		pygame.draw.rect(self.koffiezetter.scherm, (red,0,blue), (217,100,18,50),0)
+		if self.koffiezetter.myhal.getDorst() == 1:
+			self.koffiezetter.myhal.setLight(1)
 			text = font2.render("!", 0, (255, 10, 10))
-			koffiezetter.scherm.blit(text, (430,130))
+			self.koffiezetter.scherm.blit(text, (430,130))
 		else:
-			koffiezetter.myhal.setLight(0)
-		aantal_koppen = koffiezetter.myhal.getAantal()
+			self.koffiezetter.myhal.setLight(0)
+		aantal_koppen = self.koffiezetter.myhal.getAantal()
 		if len(self.koffiezetter.bezig) != 0:
 			aantal_koppen = self.koffiezetter.aantal_koppen
 		text = font2.render(str(aantal_koppen),0, (255,255,255))
-		koffiezetter.scherm.blit(text, (105,156))
+		self.koffiezetter.scherm.blit(text, (105,156))
