@@ -8,6 +8,7 @@ from sysd import SysD
 from nsdisplay import NSDisplay
 from koffiezetter import Koffiezetter
 from mpdisplay import MPDisplay
+from telegram import TGCoffeeBot
 
 # autodetect if we are on the real platform, or in simulation mode
 if platform.machine()=='armv6l':
@@ -24,7 +25,7 @@ def startcb(gpio, level, tick):
 		uiState = myhal.getStateSwitch()
 		print "uiState: ", uiState
 		if uiState == 0:
-			koffiezetter.start()
+			koffiezetter.start(myhal.getAantal())
 		elif uiState == 2:
 			try:
 				mpdc.knop()
@@ -40,12 +41,15 @@ def startcb(gpio, level, tick):
 
 myhal = myhal(startcb)
 
+
 # Ctrl+C is pressed or some other error; stop pumping and everything if something goes wrong. I implemented this quite soon while developing. ;-)
 def sigint_handler(signum, frame):
 	global myhal
 	print("Interrupt! Stop the pump!")
-	mpdc.quit()
+	bot.sender("Bye!",0)
 	myhal.stopAll()
+	bot.stop_polling()
+	mpdc.quit()
 	sys.exit(1)
 
 signal.signal(signal.SIGINT, sigint_handler)
@@ -71,7 +75,14 @@ screen.blit(background, (0, 0))
 pygame.display.flip()
 mpdc = None
 sysd = SysD(background, myhal)
-koffiezetter = Koffiezetter(background, myhal)
+
+def botsender(msg,sleep):
+	bot.sender(msg,sleep)
+
+koffiezetter = Koffiezetter(background, myhal, botsender)
+
+bot = TGCoffeeBot(koffiezetter.handle_bot_message)
+
 
 clock = pygame.time.Clock()
 
