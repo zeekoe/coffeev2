@@ -13,7 +13,7 @@ class myhal:
 		self.cbf = startcb
 		self.aantalBuffer = 2
 		self.s1Buffer = 1
-		self.s2Buffer = 1
+		self.s2Buffer = 0
 		self.dBuffer = 1
 	
 	def getIsReal(self):

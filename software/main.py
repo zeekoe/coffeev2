@@ -6,6 +6,7 @@ from array import *
 # load modules
 from sysd import SysD
 from nsdisplay import NSDisplay
+from raindisplay import RainDisplay
 from koffiezetter import Koffiezetter
 from mpdisplay import MPDisplay
 from telegram import TGCoffeeBot
@@ -91,6 +92,7 @@ nsd = None
 
 while 1:
 	clock.tick(4) # screen refresh rate / clock tick are fixed to 4 FPS
+	n = myhal.getAantal()
 	try:
 		koffiezetter.update()
 	except Exception, e:
@@ -110,9 +112,13 @@ while 1:
 	elif uiState == 1:
 		try:
 			background.fill((250, 250, 250))
-			if nsd == None:
-				nsd = NSDisplay(background, myhal)
-			nsd.update()
+			if n == 1:
+				if nsd == None:
+					nsd = NSDisplay(background, myhal)
+				nsd.update()
+			else:
+				rd = RainDisplay(background, myhal)
+				rd.update()
 		except Exception, e:
 			print "Waarschuwing: " + str(e)
 	elif uiState == 2:
