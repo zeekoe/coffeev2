@@ -1,4 +1,4 @@
-import httplib2, time, afvalwijzer, socket, os, pygame
+import httplib2, time, afvalwijzer, socket, os, pygame,  datetime
 from npolive import NPOLive
 
 
@@ -22,22 +22,7 @@ class SysD:
 
 		try:
 			afvalw = afvalwijzer.afvalwijzer()
-			afval = afvalw.getafval()
-			afvaltype = afval.pop()
-			self.dagen = afval.pop()
-			if afvaltype == 'pmd':
-				self.sprite = pygame.image.load('/var/www/plastic.png')
-			elif afvaltype == 'papier':
-				self.sprite = pygame.image.load('/var/www/papier.png')
-			elif afvaltype == 'gft':
-				self.sprite = pygame.image.load('/var/www/gft.png')
-			else:
-				print "Onbekend afvaltype `" , afvaltype , "`"
-			self.sprite.convert()
-			print 'afvalsprite klaar'
-			font = pygame.font.Font(None, 40)
-			text = font.render(str(self.dagen), 0, (255, 255, 255))
-			self.sprite.blit(text, (11,28))
+			self.sprite = afvalw.getafval()
 		except Exception, e:
 			print e
 		

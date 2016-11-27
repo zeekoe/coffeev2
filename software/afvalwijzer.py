@@ -1,10 +1,13 @@
 from lxml import html
-import httplib2, re, datetime
+import httplib2, re, datetime,  pygame
 from datetime import date
 from local_settings import afval_url
 
 class afvalwijzer:
 	def __init__(self):
+		self.fullSprite = pygame.Surface((40*2+10, 64))
+		self.fullSprite = self.fullSprite.convert()
+		self.fullSprite.fill((250, 250, 250))
 		print "afval"
 	def getafval(self):
 		global afval_url
@@ -16,6 +19,7 @@ class afvalwijzer:
 
 		dichtstbij = ''
 		dagen = 0
+		cntr = 0
 		for item in items:
 			dichtstbij = item.attrib['class']
 			if dichtstbij == 'kerstbomen':
@@ -47,5 +51,26 @@ class afvalwijzer:
 				dag2 = datetime.date(2016,12,int(dag.replace(' december','')))
 			dagen = (dag2 - date.today()).days
 			if dagen >= 0:
-				break
-		return [dagen,dichtstbij]
+				sprite = self.makeSprite(dichtstbij, dagen)
+				cntr+= 1
+				if cntr == 2:
+					self.fullSprite.blit(sprite, (50, 0))
+					break
+				else:
+					self.fullSprite.blit(sprite, (0, 0))
+		return self.fullSprite
+	def makeSprite(self, type, dagen):
+		if type == 'pmd':
+			sprite = pygame.image.load('/var/www/plastic.png')
+		elif type == 'papier':
+			sprite = pygame.image.load('/var/www/papier.png')
+		elif type == 'gft':
+			sprite = pygame.image.load('/var/www/gft.png')
+		else:
+			print "Onbekend afvaltype `" , type , "`"
+		sprite.convert()
+		print 'afvalsprite klaar'
+		font = pygame.font.Font(None, 40)
+		text = font.render(str(dagen), 0, (255, 255, 255))
+		sprite.blit(text, (11,28))
+		return sprite
