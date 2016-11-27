@@ -1,5 +1,5 @@
 #!/usr/bin/python2.7
-import os, sys, pygame, signal, datetime, time, math, httplib2, socket, re, platform
+import sys, pygame, signal, time, platform
 from pygame.locals import *
 from array import *
 
@@ -89,6 +89,7 @@ clock = pygame.time.Clock()
 
 uiState = 0
 nsd = None
+rd = None
 
 while 1:
 	clock.tick(4) # screen refresh rate / clock tick are fixed to 4 FPS
@@ -117,7 +118,8 @@ while 1:
 					nsd = NSDisplay(background, myhal)
 				nsd.update()
 			else:
-				rd = RainDisplay(background, myhal)
+				if rd == None:
+					rd = RainDisplay(background, myhal)
 				rd.update()
 		except Exception, e:
 			print "Waarschuwing: " + str(e)
