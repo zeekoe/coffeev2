@@ -4,7 +4,7 @@ from lxml import html
 class RainDisplay:
 	def __init__(self, scherm1, myhal1):
 		self.scherm = scherm1
-		self.getFromWeb();	
+		self.getFromWeb();
 
 	def update(self):
 		font = pygame.font.Font(None, 20)
@@ -17,7 +17,7 @@ class RainDisplay:
 		self.scherm.blit(text,(300,150))
 		text = font.render(wind,1, (0,0,0))
 		self.scherm.blit(text,(300,170))
-		
+
 	def getFromWeb(self):
 		print("Getting info from buienradar")
 		http = httplib2.Http(timeout=5)

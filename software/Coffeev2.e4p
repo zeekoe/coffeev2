@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project Coffeev2 -->
-<!-- Saved: 2016-11-27, 10:38:20 -->
+<!-- Saved: 2016-12-03, 21:26:27 -->
 <!-- Copyright (C) 2016 Ronald Teune, coffeev2@ronaldteune.nl -->
 <Project version="5.1">
   <Language>en_US</Language>
   <Hash>219b05ffea5fda8283df43b432235f1b20b71eb2</Hash>
-  <ProgLanguage mixed="0">Python3</ProgLanguage>
+  <ProgLanguage mixed="0">Python2</ProgLanguage>
   <ProjectType>Other</ProjectType>
   <Description></Description>
   <Version>0.1</Version>
