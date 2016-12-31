@@ -14,7 +14,7 @@ class afvalwijzer:
 		http = httplib2.Http(timeout=5)
 		resp, content = http.request(afval_url)
 		tree = html.fromstring(content)
-		items = tree.xpath('/html/body/div/div[5]/section/div[2]/div//a/p | /html/body/div/div[5]/section/div[2]/div//p')
+		items = tree.xpath('/html/body/div/div[4]/section/div/div//a/p | /html/body/div/div[4]/section/div/div//p')
 		p = re.compile('^[a-z]*?\s')
 
 		dichtstbij = ''
@@ -25,30 +25,32 @@ class afvalwijzer:
 			if dichtstbij == 'kerstbomen':
 				continue
 			dag = p.sub('',item.text)
+			if '2016' in dag:
+				continue
 			if 'januari' in dag:
-				dag2 = datetime.date(2016,1,int(dag.replace(' januari','')))
+				dag2 = datetime.date(2017,1,int(dag.replace(' januari 2017','')))
 			if 'februari' in dag:
-				dag2 = datetime.date(2016,2,int(dag.replace(' februari','')))
+				dag2 = datetime.date(2017,2,int(dag.replace(' februari 2017','')))
 			if 'maart' in dag:
-				dag2 = datetime.date(2016,3,int(dag.replace(' maart','')))
+				dag2 = datetime.date(2017,3,int(dag.replace(' maart 2017','')))
 			if 'april' in dag:
-				dag2 = datetime.date(2016,4,int(dag.replace(' april','')))
+				dag2 = datetime.date(2017,4,int(dag.replace(' april 2017','')))
 			if 'mei' in dag:
-				dag2 = datetime.date(2016,5,int(dag.replace(' mei','')))
+				dag2 = datetime.date(2017,5,int(dag.replace(' mei 2017','')))
 			if 'juni' in dag:
-				dag2 = datetime.date(2016,6,int(dag.replace(' juni','')))
+				dag2 = datetime.date(2017,6,int(dag.replace(' juni 2017','')))
 			if 'juli' in dag:
-				dag2 = datetime.date(2016,7,int(dag.replace(' juli','')))
+				dag2 = datetime.date(2017,7,int(dag.replace(' juli 2017','')))
 			if 'augustus' in dag:
-				dag2 = datetime.date(2016,8,int(dag.replace(' augustus','')))
+				dag2 = datetime.date(2017,8,int(dag.replace(' augustus 2017','')))
 			if 'september' in dag:
-				dag2 = datetime.date(2016,9,int(dag.replace(' september','')))
+				dag2 = datetime.date(2017,9,int(dag.replace(' september 2017','')))
 			if 'oktober' in dag:
-				dag2 = datetime.date(2016,10,int(dag.replace(' oktober','')))
+				dag2 = datetime.date(2017,10,int(dag.replace(' oktober 2017','')))
 			if 'november' in dag:
-				dag2 = datetime.date(2016,11,int(dag.replace(' november','')))
+				dag2 = datetime.date(2017,11,int(dag.replace(' november 2017','')))
 			if 'december' in dag:
-				dag2 = datetime.date(2016,12,int(dag.replace(' december','')))
+				dag2 = datetime.date(2017,12,int(dag.replace(' december 2017','')))
 			dagen = (dag2 - date.today()).days
 			if dagen >= 0:
 				sprite = self.makeSprite(dichtstbij, dagen)
