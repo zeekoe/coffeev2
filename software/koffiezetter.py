@@ -39,16 +39,16 @@ class Koffiezetter:
 		zt = self.aantal_koppen * 110 + 10
 		# AutoBaristaScripts defined; Z = add hot water; M = grind; S = sleep
 		if self.aantal_koppen == 1:
-			self.programma = ['Z8','M135','Z16','S60','Z120'] # 46, 780/783
+			self.programma = ['Z8','M160','Z16','S60','Z120'] # 46, 780/783
 			return
 		if self.aantal_koppen == 2:
-			self.programma = ['Z8','M190','Z16','S60','Z220'] # 1325
+			self.programma = ['Z8','M230','Z16','S60','Z220'] # 1325
 			return
 		if self.aantal_koppen == 3:
-			self.programma = ['Z8','M260','Z16','S60','Z290']
+			self.programma = ['Z8','M310','Z16','S60','Z290']
 			return
 		if self.aantal_koppen == 4:
-			self.programma = ['Z8','M320','Z16','S60','Z400']
+			self.programma = ['Z8','M380','Z16','S60','Z400']
 			return
 		if self.aantal_koppen == 5: #ontkalken / descaling
 			self.programma = ['Z8'] #['Z100','S50','Z100','S200','Z100','S50','Z100','S10','Z10','S10','Z10','S340','Z400']
