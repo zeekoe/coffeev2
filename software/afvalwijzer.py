@@ -28,29 +28,29 @@ class afvalwijzer:
 			if '2016' in dag:
 				continue
 			if 'januari' in dag:
-				dag2 = datetime.date(2017,1,int(dag.replace(' januari 2017','')))
+				dag2 = datetime.date(2017,1,int(dag.replace(' januari','')))
 			if 'februari' in dag:
-				dag2 = datetime.date(2017,2,int(dag.replace(' februari 2017','')))
+				dag2 = datetime.date(2017,2,int(dag.replace(' februari','')))
 			if 'maart' in dag:
-				dag2 = datetime.date(2017,3,int(dag.replace(' maart 2017','')))
+				dag2 = datetime.date(2017,3,int(dag.replace(' maart','')))
 			if 'april' in dag:
-				dag2 = datetime.date(2017,4,int(dag.replace(' april 2017','')))
+				dag2 = datetime.date(2017,4,int(dag.replace(' april','')))
 			if 'mei' in dag:
-				dag2 = datetime.date(2017,5,int(dag.replace(' mei 2017','')))
+				dag2 = datetime.date(2017,5,int(dag.replace(' mei','')))
 			if 'juni' in dag:
-				dag2 = datetime.date(2017,6,int(dag.replace(' juni 2017','')))
+				dag2 = datetime.date(2017,6,int(dag.replace(' juni','')))
 			if 'juli' in dag:
-				dag2 = datetime.date(2017,7,int(dag.replace(' juli 2017','')))
+				dag2 = datetime.date(2017,7,int(dag.replace(' juli','')))
 			if 'augustus' in dag:
-				dag2 = datetime.date(2017,8,int(dag.replace(' augustus 2017','')))
+				dag2 = datetime.date(2017,8,int(dag.replace(' augustus','')))
 			if 'september' in dag:
-				dag2 = datetime.date(2017,9,int(dag.replace(' september 2017','')))
+				dag2 = datetime.date(2017,9,int(dag.replace(' september','')))
 			if 'oktober' in dag:
-				dag2 = datetime.date(2017,10,int(dag.replace(' oktober 2017','')))
+				dag2 = datetime.date(2017,10,int(dag.replace(' oktober','')))
 			if 'november' in dag:
-				dag2 = datetime.date(2017,11,int(dag.replace(' november 2017','')))
+				dag2 = datetime.date(2017,11,int(dag.replace(' november','')))
 			if 'december' in dag:
-				dag2 = datetime.date(2017,12,int(dag.replace(' december 2017','')))
+				dag2 = datetime.date(2017,12,int(dag.replace(' december','')))
 			dagen = (dag2 - date.today()).days
 			if dagen >= 0:
 				sprite = self.makeSprite(dichtstbij, dagen)
