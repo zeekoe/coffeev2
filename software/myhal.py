@@ -21,7 +21,8 @@ def gpiomaalcb(gpio, level, tick): # call back for grinder pulse
 
 def gpiopompcb(gpio, level, tick): # call back for flow meter (water pump) pulse
 	global pompteller
-	pompteller += 1
+	if level == 0 and pompteller > 0:
+		pompteller -= 1
 
 class myhal:
 	def __init__(self, startcb):
@@ -60,8 +61,13 @@ class myhal:
 		global maalteller
 		maalteller = mt
 	def getPompteller(self):
+		# 1000 count units = 380 ml
 		global pompteller
-		return pompteller
+		return pompteller * 380 / 1000
+	def setPompteller(self,  pt):
+		# 1000 count units = 380 ml
+		global pompteller
+		pompteller = pt * 1000 / 380
 	def getAantal(self):
 		tmp = self.bus.read_byte_data(self.address,0)
 		if tmp == 1:

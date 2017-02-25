@@ -25,6 +25,9 @@ class myhal:
 	def setMaalteller(self, mt):
 		global maalteller
 		maalteller = mt
+	def setPompteller(self, pt):
+		global pompteller
+		pompteller = pt
 	def getPompteller(self):
 		global pompteller
 		return pompteller

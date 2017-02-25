@@ -7,11 +7,16 @@ from local_settings import coffee_set_url
 KOFFIEBRUIN = (102, 41, 18)
 zetkoffie = 0
 
+# references:
+# 1000 count units = 380 ml
+# 1 cup = 220 ml
+
 
 class Koffiezetter:
 	bezig = 0
 	bezig_malen = 0
 	zettijd = 0
+	wachttijd = 0
 	knipper = 0
 
 	def __init__(self, scherm1, myhal1, botsender):
@@ -33,33 +38,35 @@ class Koffiezetter:
 			print "Already started!"
 			return
 		self.aantal_koppen = aantal
-		maalteller = self.myhal.getMaalteller() # get grinder count
 		print("Start " + str(self.aantal_koppen))
 		self.botsender("Starting to brew " + str(self.aantal_koppen) + " cups of coffee.",0)
-		zt = self.aantal_koppen * 110 + 10
 		# AutoBaristaScripts defined; Z = add hot water; M = grind; S = sleep
 		if self.aantal_koppen == 1:
-			self.programma = ['Z8','M135','Z16','S60','Z120'] # 46, 780/783
+			self.programma = ['Z25','M135','Z50','S60','Z225'] # 46, 780/783
 			return
 		if self.aantal_koppen == 2:
-			self.programma = ['Z8','M190','Z16','S60','Z220'] # 1325
+			self.programma = ['Z25','M190','Z50','S60','Z445'] # 1325
 			return
 		if self.aantal_koppen == 3:
-			self.programma = ['Z8','M260','Z16','S60','Z290']
+			self.programma = ['Z25','M260','Z50','S60','Z665']
 			return
 		if self.aantal_koppen == 4:
-			self.programma = ['Z8','M320','Z16','S60','Z400']
+			self.programma = ['Z25','M320','Z50','S60','Z885']
 			return
 		if self.aantal_koppen == 5: #ontkalken / descaling
-			self.programma = ['Z8'] #['Z100','S50','Z100','S200','Z100','S50','Z100','S10','Z10','S10','Z10','S340','Z400']
+			self.programma = ['Z25'] #['Z100','S50','Z100','S200','Z100','S50','Z100','S10','Z10','S10','Z10','S340','Z400']
 			return
 
 	def updateUi(self): # update all UI elements
 		self.tempv.update()
 		self.kp1.update(self.myhal.getMaalteller())
 		self.kk.update()
-		self.kp2.update(self.zettijd)
-		self.pijl.update(self.zettijd)
+		if self.bezig[0] == 'Z':
+			self.kp2.update(self.zettijd)
+			self.pijl.update(self.zettijd)
+		else:
+			self.kp2.update(self.wachttijd)
+			self.pijl.update(self.wachttijd)
 
 		# Currently, water amount is still time-based. For debugging, show flow meter count on screen.
 		font = pygame.font.Font(None, 36)
@@ -80,12 +87,12 @@ class Koffiezetter:
 			if self.bezig[0] == 'Z':
 				n = int(self.bezig[1:])
 				print 'zet: ',n
-				self.zettijd = n
+				self.myhal.setPompteller(n)
 				self.kp2.setMaxval(n)
 			if self.bezig[0] == 'S':
 				n = int(self.bezig[1:])
 				print 'wacht: ',n
-				self.zettijd = n
+				self.wachttijd = n
 				self.kp2.setMaxval(n)
 
 		if len(self.bezig) == 0: # no actions left? return.
@@ -113,24 +120,24 @@ class Koffiezetter:
 			return self.boilcheck() # boiling & pumping control gets a separate subroutine
 		
 		if self.bezig[0] == 'S':
-			self.zettijd -= 1
-			if self.zettijd < 1:
+			self.wachttijd -= 1
+			if self.wachttijd < 1:
 				self.programma.pop(0) # next script item
 
 	def boilcheck(self):
+		self.zettijd = self.myhal.getPompteller()
 		print self.bezig, self.zettijd
 		temperatuur = self.myhal.getTemperature()
 		# some trial & error control engineering to get water of the right temperature
 		# (temperatures are somewhat in degrees celcius, but no accurate calibration is done)
 		if(self.zettijd > 0):
-			if(temperatuur > 92 or self.zettijd < 10) and self.myhal.getDorst() == 0:
+			if(temperatuur > 92 or self.zettijd < 30) and self.myhal.getDorst() == 0:
 				self.myhal.doPump()
-				self.zettijd -= 1
-				if self.zettijd > 8:
+				if self.zettijd > 25:
 					self.myhal.doBoil()
 			else:
 				self.myhal.stopPump()
-				if(temperatuur < 97 and self.zettijd > 8):
+				if(temperatuur < 97 and self.zettijd > 25):
 					self.myhal.doBoil()
 				else:
 					self.myhal.stopBoil()
@@ -147,7 +154,7 @@ class Koffiezetter:
 					con.commit()
 					cur.close()
 					con.close()
-                                        os.system("sync")
+					os.system("sync")
 				except Exception, e:
 					print "Error writing to database: " + str(e)
 		
