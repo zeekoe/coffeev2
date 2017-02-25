@@ -42,26 +42,26 @@ class Koffiezetter:
 		self.botsender("Starting to brew " + str(self.aantal_koppen) + " cups of coffee.",0)
 		# AutoBaristaScripts defined; Z = add hot water; M = grind; S = sleep
 		if self.aantal_koppen == 1:
-			self.programma = ['Z25','M135','Z50','S60','Z225'] # 46, 780/783
+			self.programma = ['Z6','M135','Z50','S60','Z170'] # 46, 780/783
 			return
 		if self.aantal_koppen == 2:
-			self.programma = ['Z25','M190','Z50','S60','Z445'] # 1325
+			self.programma = ['Z6','M190','Z50','S60','Z390'] # 1325
 			return
 		if self.aantal_koppen == 3:
-			self.programma = ['Z25','M260','Z50','S60','Z665']
+			self.programma = ['Z6','M260','Z50','S60','Z610']
 			return
 		if self.aantal_koppen == 4:
-			self.programma = ['Z25','M320','Z50','S60','Z885']
+			self.programma = ['Z6','M320','Z50','S60','Z830']
 			return
 		if self.aantal_koppen == 5: #ontkalken / descaling
-			self.programma = ['Z25'] #['Z100','S50','Z100','S200','Z100','S50','Z100','S10','Z10','S10','Z10','S340','Z400']
+			self.programma = ['Z100'] #['Z100','S50','Z100','S200','Z100','S50','Z100','S10','Z10','S10','Z10','S340','Z400']
 			return
 
 	def updateUi(self): # update all UI elements
 		self.tempv.update()
 		self.kp1.update(self.myhal.getMaalteller())
 		self.kk.update()
-		if self.bezig[0] == 'Z':
+		if self.zettijd > 0:
 			self.kp2.update(self.zettijd)
 			self.pijl.update(self.zettijd)
 		else:
