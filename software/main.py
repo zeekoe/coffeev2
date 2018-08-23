@@ -9,7 +9,6 @@ from nsdisplay import NSDisplay
 from raindisplay import RainDisplay
 from koffiezetter import Koffiezetter
 from mpdisplay import MPDisplay
-from telegram import TGCoffeeBot
 
 # autodetect if we are on the real platform, or in simulation mode
 if platform.machine()=='armv6l':
@@ -47,9 +46,7 @@ myhal = myhal(startcb)
 def sigint_handler(signum, frame):
 	global myhal
 	print("Interrupt! Stop the pump!")
-	bot.sender("Bye!",0)
 	myhal.stopAll()
-	bot.stop_polling()
 	mpdc.quit()
 	sys.exit(1)
 
@@ -77,12 +74,8 @@ pygame.display.flip()
 mpdc = None
 sysd = SysD(background, myhal)
 
-def botsender(msg,sleep):
-	bot.sender(msg,sleep)
 
-koffiezetter = Koffiezetter(background, myhal, botsender)
-
-bot = TGCoffeeBot(koffiezetter.handle_bot_message)
+koffiezetter = Koffiezetter(background, myhal)
 
 
 clock = pygame.time.Clock()

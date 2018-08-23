@@ -19,7 +19,7 @@ class Koffiezetter:
 	wachttijd = 0
 	knipper = 0
 
-	def __init__(self, scherm1, myhal1, botsender):
+	def __init__(self, scherm1, myhal1):
 		self.aantal_koppen = 0
 		self.scherm = scherm1
 		self.myhal = myhal1
@@ -32,26 +32,24 @@ class Koffiezetter:
 		self.pijl = Pijltjes(self.scherm, self.myhal)
 		self.programma = []
 		self.coffee_set_url = coffee_set_url
-		self.botsender = botsender
 	def start(self,aantal):
 		if len(self.bezig) != 0:
 			print "Already started!"
 			return
 		self.aantal_koppen = aantal
 		print("Start " + str(self.aantal_koppen))
-		self.botsender("Starting to brew " + str(self.aantal_koppen) + " cups of coffee.",0)
 		# AutoBaristaScripts defined; Z = add hot water; M = grind; S = sleep
 		if self.aantal_koppen == 1:
-			self.programma = ['Z6','M135','Z50','S60','Z170'] # 46, 780/783
+			self.programma = ['Z6','M150','Z50','S60','Z170'] # 46, 780/783
 			return
 		if self.aantal_koppen == 2:
-			self.programma = ['Z6','M190','Z50','S60','Z390'] # 1325
+			self.programma = ['Z6','M240','Z50','S60','Z390'] # 1325
 			return
 		if self.aantal_koppen == 3:
-			self.programma = ['Z6','M260','Z50','S60','Z610']
+			self.programma = ['Z6','M365','Z50','S60','Z610']
 			return
 		if self.aantal_koppen == 4:
-			self.programma = ['Z6','M320','Z50','S60','Z830']
+			self.programma = ['Z6','M435','Z50','S60','Z830']
 			return
 		if self.aantal_koppen == 5: #ontkalken / descaling
 			self.programma = ['Z100'] #['Z100','S50','Z100','S200','Z100','S50','Z100','S10','Z10','S10','Z10','S340','Z400']
@@ -131,13 +129,13 @@ class Koffiezetter:
 		# some trial & error control engineering to get water of the right temperature
 		# (temperatures are somewhat in degrees celcius, but no accurate calibration is done)
 		if(self.zettijd > 0):
-			if(temperatuur > 92 or self.zettijd < 30) and self.myhal.getDorst() == 0:
+			if(temperatuur > 88 or self.zettijd < 30) and self.myhal.getDorst() == 0:
 				self.myhal.doPump()
 				if self.zettijd > 25:
 					self.myhal.doBoil()
 			else:
 				self.myhal.stopPump()
-				if(temperatuur < 97 and self.zettijd > 25):
+				if(temperatuur < 93 and self.zettijd > 25):
 					self.myhal.doBoil()
 				else:
 					self.myhal.stopBoil()
@@ -163,7 +161,6 @@ class Koffiezetter:
 					self.aantal_koppen -= 1
 				try:
 					#resp, content = self.http.request("2.php?&aantal=" + str(self.aantal_koppen) + "&datum=" + datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
-					self.botsender("Coffee is finished! Enjoy!",0)
 					resp, content = self.http.request(self.coffee_set_url) # ask internet server to pull db change from machine
 
 				except Exception, e:

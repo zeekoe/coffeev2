@@ -7,10 +7,7 @@ from time import sleep
 class TGCoffeeBot:
 	def __init__(self, receiver):
 		self.uid = allowed_users[0]
-		self.bot = telebot.TeleBot(tgbot_token)
-		self.bot.send_message(self.uid, "This is your coffee machine speaking. I am awake!")
 		
-		@self.bot.message_handler(func=lambda message: True)
 		def msghandler(message):
 			if message.from_user.id not in allowed_users:
 				print message.from_user.first_name,message.from_user.last_name,message.from_user.id,"is unknown"
