@@ -7,6 +7,7 @@ class MPDisplay:
 		self.ticker = 0
 		self.scherm = scherm1
 		self.myhal = myhal1
+		self.ipc = 8
 		self.fn = 'volgende'
 		self.mode = 0
 		self.modets = 0
@@ -17,6 +18,11 @@ class MPDisplay:
 			self.c.connect("localhost", 6600)  # connect to localhost:6600
 		else:
 			self.c.connect("192.168.1.8", 6600)  # connect to localhost:6600
+			if(self.c.status()):
+				print "bla"
+			else:
+				self.c.connect("192.168.1.120", 6600)  # connect to localhost:6600
+				self.ipc = 120
 		print(self.c.mpd_version)          # print the MPD version
 		self.c.iterate = True
 		self.pos = ""
@@ -126,15 +132,14 @@ class MPDisplay:
 			self.fn = ''
 	def update(self):
 		self.ticker += 1
-		if self.ticker % 4 == 0:
+		if self.ticker % 8 == 0:
 			if os.system("ps -A | grep snapclient") != 0: # check if snapclient is still running
 				print "start snapclient"
-				os.system("sudo snapclient -d -h 192.168.1.8")
-			if os.system("mount |grep music") == 0: # check dir mount state (smb/cifs) and show scroll bar color
+				if(self.ipc == 120):
+					os.system("sudo snapclient -d -h 192.168.1.120")
+				else:
+					os.system("sudo snapclient -d -h 192.168.1.8")
 				self.kp.setColors((0,128,255),(0,255,255))
-			else:
-				self.kp.setColors((0,128,255),(255,0,0))
-				os.system("mounter.sh")
 		self.getfn()
 		
 		font = pygame.font.Font(None, 20)

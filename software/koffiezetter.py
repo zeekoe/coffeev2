@@ -52,7 +52,7 @@ class Koffiezetter:
 			self.programma = ['Z6','M435','Z50','S60','Z830']
 			return
 		if self.aantal_koppen == 5: #ontkalken / descaling
-			self.programma = ['Z100'] #['Z100','S50','Z100','S200','Z100','S50','Z100','S10','Z10','S10','Z10','S340','Z400']
+			self.programma = ['Z500'] #['Z100','S50','Z100','S200','Z100','S50','Z100','S10','Z10','S10','Z10','S340','Z400']
 			return
 
 	def updateUi(self): # update all UI elements

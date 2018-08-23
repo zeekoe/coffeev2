@@ -33,9 +33,6 @@ class SysD:
 		if(self.ticker % 4 == 0):
 			if self.tvCountDown > 0:
 				self.tvCountDown -= 1
-			if self.mountCountDown > 0:
-				self.mountCountDown -= 1
-				print 'mountcountdown', self.mountCountDown
 			try:
 				self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 				self.sock.settimeout(0.1)
@@ -49,34 +46,15 @@ class SysD:
 				self.cdState = 0
 			#resp, content = self.http.request("http://192.168.1.9/ping.html")
 			#print resp,content
-			if os.system("mount |grep music") == 0:
-				self.mountState = 1
-			else:
-				self.mountState = 0
 		font = pygame.font.Font(None, 20)
 		if hasattr(self,'sprite'):
 			self.scherm.blit(self.sprite, (10,10))
 		if(self.cdState == 0):
 			text = font.render("CD-spelercomputer: uit", 0, (10, 10, 10))
 			self.scherm.blit(text, (150,15))
-			if(self.mountState == 1):
-				try:
-					os.system("unmounter.sh")
-				except Exception, e:
-					print e
 		else:
 			text = font.render("CD-spelercomputer: aan", 0, (10, 10, 10))
 			self.scherm.blit(text, (150,15))
-			if(self.mountState == 0):
-				text = font.render("Muziek niet beschikbaar op de koffiemachine.", 0, (10, 10, 10))
-				try:
-					if self.mountCountDown < 1:
-						os.system("mounter.sh")
-				except Exception, e:
-					print e
-			else:
-				text = font.render("Muziek beschikbaar op de koffiemachine!", 0, (10, 10, 10))
-			self.scherm.blit(text, (150,45))
 		aantal = self.myhal.getAantal()
 		text = font.render("1. CD-spelercomputer uitzetten", 0, (10, 10, 10))
 		self.scherm.blit(text, (150,75))
@@ -127,8 +105,6 @@ class SysD:
 		if self.subMode == 0:
                     if(aantal == 1):
                             try:
-                                    self.mountCountDown = 20
-                                    os.system("unmounter.sh")
                                     resp, content = self.http.request("http://192.168.1.8/index.php?shutdown")
                                     print resp,content
                             except Exception, e:
