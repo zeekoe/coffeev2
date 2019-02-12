@@ -25,32 +25,30 @@ class afvalwijzer:
 			if dichtstbij == 'kerstbomen':
 				continue
 			dag = p.sub('',item.text)
-			if '2016' in dag:
-				continue
 			if 'januari' in dag:
-				dag2 = datetime.date(2018,1,int(dag.replace(' januari','')))
+				dag2 = datetime.date(2019,1,int(dag.replace(' januari','')))
 			if 'februari' in dag:
-				dag2 = datetime.date(2018,2,int(dag.replace(' februari','')))
+				dag2 = datetime.date(2019,2,int(dag.replace(' februari','')))
 			if 'maart' in dag:
-				dag2 = datetime.date(2018,3,int(dag.replace(' maart','')))
+				dag2 = datetime.date(2019,3,int(dag.replace(' maart','')))
 			if 'april' in dag:
-				dag2 = datetime.date(2018,4,int(dag.replace(' april','')))
+				dag2 = datetime.date(2019,4,int(dag.replace(' april','')))
 			if 'mei' in dag:
-				dag2 = datetime.date(2018,5,int(dag.replace(' mei','')))
+				dag2 = datetime.date(2019,5,int(dag.replace(' mei','')))
 			if 'juni' in dag:
-				dag2 = datetime.date(2018,6,int(dag.replace(' juni','')))
+				dag2 = datetime.date(2019,6,int(dag.replace(' juni','')))
 			if 'juli' in dag:
-				dag2 = datetime.date(2018,7,int(dag.replace(' juli','')))
+				dag2 = datetime.date(2019,7,int(dag.replace(' juli','')))
 			if 'augustus' in dag:
-				dag2 = datetime.date(2018,8,int(dag.replace(' augustus','')))
+				dag2 = datetime.date(2019,8,int(dag.replace(' augustus','')))
 			if 'september' in dag:
-				dag2 = datetime.date(2018,9,int(dag.replace(' september','')))
+				dag2 = datetime.date(2019,9,int(dag.replace(' september','')))
 			if 'oktober' in dag:
-				dag2 = datetime.date(2018,10,int(dag.replace(' oktober','')))
+				dag2 = datetime.date(2019,10,int(dag.replace(' oktober','')))
 			if 'november' in dag:
-				dag2 = datetime.date(2018,11,int(dag.replace(' november','')))
+				dag2 = datetime.date(2019,11,int(dag.replace(' november','')))
 			if 'december' in dag:
-				dag2 = datetime.date(2018,12,int(dag.replace(' december','')))
+				dag2 = datetime.date(2019,12,int(dag.replace(' december','')))
 			dagen = (dag2 - date.today()).days
 			if dagen >= 0:
 				sprite = self.makeSprite(dichtstbij, dagen)

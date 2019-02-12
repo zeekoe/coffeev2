@@ -7,7 +7,6 @@ class MPDisplay:
 		self.ticker = 0
 		self.scherm = scherm1
 		self.myhal = myhal1
-		self.ipc = 8
 		self.fn = 'volgende'
 		self.mode = 0
 		self.modets = 0
@@ -17,12 +16,7 @@ class MPDisplay:
 		if(self.myhal.getIsReal() == False):
 			self.c.connect("localhost", 6600)  # connect to localhost:6600
 		else:
-			self.c.connect("192.168.1.8", 6600)  # connect to localhost:6600
-			if(self.c.status()):
-				print "bla"
-			else:
-				self.c.connect("192.168.1.120", 6600)  # connect to localhost:6600
-				self.ipc = 120
+			self.c.connect("192.168.1.120", 6600)  # connect to localhost:6600
 		print(self.c.mpd_version)          # print the MPD version
 		self.c.iterate = True
 		self.pos = ""
@@ -135,10 +129,7 @@ class MPDisplay:
 		if self.ticker % 8 == 0:
 			if os.system("ps -A | grep snapclient") != 0: # check if snapclient is still running
 				print "start snapclient"
-				if(self.ipc == 120):
-					os.system("sudo snapclient -d -h 192.168.1.120")
-				else:
-					os.system("sudo snapclient -d -h 192.168.1.8")
+				os.system("sudo snapclient -d -h 192.168.1.120")
 				self.kp.setColors((0,128,255),(0,255,255))
 		self.getfn()
 		

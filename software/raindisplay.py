@@ -10,8 +10,8 @@ class RainDisplay:
 		font = pygame.font.Font(None, 20)
 		text = font.render(datetime.datetime.now().strftime("%H:%M"),1, (0,0,0))
 		self.scherm.blit(text,(444,2))
-		temperature = self.tree.xpath('//*[@id="6260"]/temperatuurgc')[0].text
-		wind = self.tree.xpath('//*[@id="6260"]/windrichting')[0].text + ' ' + self.tree.xpath('//*[@id="6260"]/windsnelheidbf')[0].text
+		temperature = self.tree.xpath('//*[@id="6260"]/temperatuurGC')[0].text
+		wind = self.tree.xpath('//*[@id="6260"]/windrichting')[0].text + ' ' + self.tree.xpath('//*[@id="6260"]/windsnelheidBF')[0].text
 		self.scherm.blit(self.img,(0,0))
 		text = font.render(temperature,1, (0,0,0))
 		self.scherm.blit(text,(300,150))
