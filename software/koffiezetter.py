@@ -39,7 +39,7 @@ class Koffiezetter:
 		self.aantal_koppen = aantal
 		print("Start " + str(self.aantal_koppen))
 		# AutoBaristaScripts defined; Z = add hot water; M = grind; S = sleep
-		if self.aantal_koppen == 1:
+		if self.aantal_koppen == 1: # 2274 is the first cup of 175ml instead of 240ml
 			self.programma = ['Z6','M115','Z50','S60','Z115'] # 50 + 170 = 220
 			return
 		if self.aantal_koppen == 2:
