@@ -7,6 +7,10 @@ maalteller = 0
 gpiostate = {0:0}
 globalpi = pigpio.pi()
 pompteller = 0
+maaltijd = []
+maaltik = 0
+pomptijd = []
+pomptik = 0
 
 def gpiocb(gpio, level, tick):
 	global gpiostate
@@ -15,14 +19,26 @@ def gpiocb(gpio, level, tick):
 
 
 def gpiomaalcb(gpio, level, tick): # call back for grinder pulse
-	global maalteller
+	global maalteller, maaltijd, maaltik
 	if level == 0 and maalteller > 0:
 		maalteller -= 1
+		if maaltik != 0:
+			maaltijd.append((tick - maaltik) / 1000)
+			if len(maaltijd) > 4:
+				maaltijd.pop(0)
+			print(maaltijd)
+		maaltik = tick
 
 def gpiopompcb(gpio, level, tick): # call back for flow meter (water pump) pulse
-	global pompteller
+	global pompteller, pomptik, pomptijd
 	if level == 0 and pompteller > 0:
 		pompteller -= 1
+		if pomptik != 0:
+			pomptijd.append((tick - pomptik) / 1000)
+			if len(pomptijd) > 2:
+				pomptijd.pop(0)
+			print(pomptijd)
+		pomptik = tick
 
 class myhal:
 	def __init__(self, startcb):
@@ -60,6 +76,12 @@ class myhal:
 	def setMaalteller(self, mt):
 		global maalteller
 		maalteller = mt
+	def getMaaltijd(self):
+		global maaltijd
+		if len(maaltijd) == 0:
+			return 0
+		else:
+			return sum(maaltijd) / len(maaltijd)
 	def getPompteller(self):
 		# 1000 count units = 380 ml
 		global pompteller
@@ -68,6 +90,12 @@ class myhal:
 		# 1000 count units = 380 ml
 		global pompteller
 		pompteller = pt * 1000 / 380
+	def getPomptijd(self):
+		global pomptijd
+		if len(pomptijd) == 0:
+			return 0
+		else:
+			return sum(pomptijd) / len(pomptijd)
 	def getAantal(self):
 		tmp = self.bus.read_byte_data(self.address,0)
 		if tmp == 1:
@@ -108,7 +136,12 @@ class myhal:
 	def stopGrind(self):
 		self.pi.write(14,1)
 	def getDorst(self):
-		return self.pi.read(4)
+		water_low = self.pi.read(4)
+		pt = self.getPomptijd()
+		if pt > 60 and water_low == 1:
+			return 1
+		else:
+			return 0
 	def getTemperature(self):
 		return self.bus.read_byte_data(self.address,1)
 	def stopAll(self):

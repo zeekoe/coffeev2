@@ -20,11 +20,11 @@ class SysD:
 		self.scherm = scherm1
 		self.myhal = myhal1
 
-		try:
-			afvalw = afvalwijzer.afvalwijzer()
-			self.sprite = afvalw.getafval()
-		except Exception, e:
-			print e
+		# try:
+		# 	afvalw = afvalwijzer.afvalwijzer()
+		# 	self.sprite = afvalw.getafval()
+		# except Exception, e:
+		# 	print e
 		
         def setSubMode(self,mode):
             self.subMode = mode
