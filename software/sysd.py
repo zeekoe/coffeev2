@@ -56,7 +56,7 @@ class SysD:
 			text = font.render("CD-spelercomputer: aan", 0, (10, 10, 10))
 			self.scherm.blit(text, (150,15))
 		aantal = self.myhal.getAantal()
-		text = font.render("1. CD-spelercomputer uitzetten", 0, (10, 10, 10))
+		text = font.render("1. Muziek fixen", 0, (10, 10, 10))
 		self.scherm.blit(text, (150,75))
 		text = font.render("2. Koffiemachine uitzetten", 0, (10, 10, 10))
 		self.scherm.blit(text, (150,105))
@@ -104,11 +104,7 @@ class SysD:
 		print self.subMode
 		if self.subMode == 0:
                     if(aantal == 1):
-                            try:
-                                    resp, content = self.http.request("http://192.168.1.8/index.php?shutdown")
-                                    print resp,content
-                            except Exception, e:
-                                    print e
+                            os.system("sudo service snapclient restart")
                     if(aantal == 2):
                             print "shutting down"
                             os.system("sync")
