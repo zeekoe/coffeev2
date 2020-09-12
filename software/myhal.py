@@ -136,9 +136,10 @@ class myhal:
 	def stopGrind(self):
 		self.pi.write(14,1)
 	def getDorst(self):
+		global pompteller
 		water_low = self.pi.read(4)
-		pt = self.getPomptijd()
-		if pt > 60 and water_low == 1:
+		pomptijd = self.getPomptijd()
+		if (pomptijd > 60 or pompteller == 0) and water_low == 1:
 			return 1
 		else:
 			return 0
