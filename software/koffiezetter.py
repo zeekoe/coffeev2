@@ -40,16 +40,16 @@ class Koffiezetter:
 		print("Start " + str(self.aantal_koppen))
 		# AutoBaristaScripts defined; Z = add hot water; M = grind; S = sleep
 		if self.aantal_koppen == 1: # 2274 is the first cup of 175ml instead of 240ml
-			self.programma = ['Z6','M115','Z50','S60','Z115'] # 50 + 170 = 220
+			self.programma = ['Z6','M107','Z50','S60','Z115'] # 50 + 170 = 220
 			return
 		if self.aantal_koppen == 2:
-			self.programma = ['Z6','M180','Z50','S60','Z270'] # 50 + 390 = 440
+			self.programma = ['Z6','M171','Z50','S60','Z270'] # 50 + 390 = 440
 			return
 		if self.aantal_koppen == 3:
-			self.programma = ['Z6','M270','Z50','S60','Z425'] # 50 + 610 = 660
+			self.programma = ['Z6','M255','Z50','S60','Z425'] # 50 + 610 = 660
 			return
 		if self.aantal_koppen == 4:
-			self.programma = ['Z6','M326','Z50','S60','Z580'] # 60 + 830 = 880
+			self.programma = ['Z6','M309','Z50','S60','Z580'] # 60 + 830 = 880
 			return
 		if self.aantal_koppen == 5: #ontkalken / descaling
 			self.programma = ['Z500'] #['Z100','S50','Z100','S200','Z100','S50','Z100','S10','Z10','S10','Z10','S340','Z400']
