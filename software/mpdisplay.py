@@ -13,56 +13,26 @@ class MPDisplay:
 		self.c = MPDClient()               # create client object
 		self.c.timeout = 1                 # network timeout in seconds (floats allowed), default: None
 		self.c.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-		if(self.myhal.getIsReal() == False):
-			self.c.connect("localhost", 6600)  # connect to localhost:6600
-		else:
-			self.c.connect("192.168.1.120", 6600)  # connect to localhost:6600
+		self.c.connect("192.168.1.120", 6600)  # connect to localhost:6600
 		print(self.c.mpd_version)          # print the MPD version
 		self.c.iterate = True
 		self.pos = ""
 		self.updateList()
 		try:
 			self.aantal = self.myhal.getAantal()
-		except Exception, e:
-			print "Fout in koffiezetter: " + str(e)
+		except Exception as e:
+			print ("Fout in koffiezetter: " + str(e))
 		self.fnlist = {1:'volgende',2:'vorige',4:'afspelen',3:'schermwissel',5:'woonkamer'}
 		self.c2 = None;
 		self.kp = KProgressBar(self.scherm,0,0,20,236,1000)
 		self.kp.setColors((0,128,255),(0,255,255))
-
-	def copyTo(self, newip): # copy current song + position to different server
-		print "start copyTo"
-		if(self.c2 == None):
-			self.c2 = MPDClient()               # create client object
-			self.c2.timeout = 1                 # network timeout in seconds (floats allowed), default: None
-			self.c2.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-			self.c2.connect(newip, 6600)  # connect to localhost:6600
-			print(self.c2.mpd_version)          # print the MPD version
-			self.c2.iterate = True
-		print "copyTo A"
-		pl = self.c.playlistinfo()
-		self.c2.clear()
-		print "copyTo B"
-		for pix in pl:
-			self.c2.add(pix['file'])
-		print "copyTo C"
-		songpos = self.c.status()['song'];
-		el = float(self.c.status()['elapsed'])
-		intel = int(el)
-		print "copyTo D"
-		if(el - intel > 0.2):
-			time.sleep(el - intel)
-		self.c2.seek(songpos,intel+1)
-		time.sleep(1)
-		#print self.c.status()['elapsed']
-		#print self.c2.status()['elapsed']
 
 	def updateList(self): # update list of directories / songs
 		self.dirs = ['Afspelen']
 		if self.pos != "":
 			self.dirs.append('Omhoog')
 		for el in self.c.lsinfo(self.pos):
-	    		if 'directory' in el:
+			if 'directory' in el:
 				self.dirs.append(el['directory'])
 		self.listStart = 0
 		self.listPos = 0
@@ -92,11 +62,8 @@ class MPDisplay:
 				else:
 					self.pos = self.curListItem
 					self.updateList()
-					print self.pos
-					print len(self.dirs)
 				if self.curListItem == 'Afspelen' or len(self.dirs) < 4: # play if the 'Play' entry is selected, or if the only sub directories are '.', '..' and one 'real' dir.
 					self.c.clear()
-					print self.pos
 					self.c.add(self.pos)
 					self.c.play()
 					self.mode = 1
@@ -128,14 +95,12 @@ class MPDisplay:
 		self.ticker += 1
 		if self.ticker % 8 == 0:
 			if os.system("ps -A | grep snapclient") != 0: # check if snapclient is still running
-				print "start snapclient"
+				print ("start snapclient")
 				os.system("sudo snapclient -d -h 192.168.1.120")
 				self.kp.setColors((0,128,255),(0,255,255))
 		self.getfn()
 		
 		font = pygame.font.Font(None, 20)
-		font18 = pygame.font.Font(None, 18)
-		font24 = pygame.font.Font(None, 26)
 		
 		if self.mode == 0:
 			i = -1
@@ -180,13 +145,12 @@ class MPDisplay:
 				self.scherm.blit(text,(25,106))
 				timeok = timeok + 1
 			if timeok == 2:
-				print self.timeToSeconds(self.formattime(info['time']))
-				print self.timeToSeconds(self.formattime(status['time']))
+				print (self.timeToSeconds(self.formattime(info['time'])))
+				print (self.timeToSeconds(self.formattime(status['time'])))
 				self.kp.setMaxval(self.timeToSeconds(self.formattime(info['time'])))
 				self.kp.update(self.timeToSeconds(self.formattime(info['time'])) - self.timeToSeconds(self.formattime(status['time'])))
 
 			
-		nsblauw = (0, 0, 100)
 		text = font.render(datetime.datetime.now().strftime("%H:%M"),1, (0,0,0))
 		self.scherm.blit(text,(444,2))
 

@@ -35,7 +35,7 @@ class myhal:
 	def getAantal(self):
 		return self.aantalBuffer
 	def setLight(self,value):
-		print "light: " + str(value)
+		print ("light: " + str(value))
 	def doCount(self):
 		print("counting")
 		time.sleep(.5)
@@ -76,7 +76,7 @@ class myhal:
 	def getStateSwitch(self):
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:
-				print "Key: ",event.key
+				print ("Key: ",event.key)
 				if event.key == pygame.K_1:
 					self.aantalBuffer = 1
 				elif event.key == pygame.K_2:
@@ -96,4 +96,3 @@ class myhal:
 				elif event.key == pygame.K_SPACE:
 					self.cbf(0,0,0)
 		return self.s1Buffer + 2 * self.s2Buffer
-		

@@ -8,7 +8,7 @@ class afvalwijzer:
 		self.fullSprite = pygame.Surface((40*2+10, 64))
 		self.fullSprite = self.fullSprite.convert()
 		self.fullSprite.fill((250, 250, 250))
-		print "afval"
+		print ("afval")
 	def getafval(self):
 		global afval_url
 		http = httplib2.Http(timeout=5)
@@ -67,9 +67,9 @@ class afvalwijzer:
 		elif type == 'gft':
 			sprite = pygame.image.load('/var/www/gft.png')
 		else:
-			print "Onbekend afvaltype `" , type , "`"
+			print ("Onbekend afvaltype `" , type , "`")
 		sprite.convert()
-		print 'afvalsprite klaar'
+		print ('afvalsprite klaar')
 		font = pygame.font.Font(None, 40)
 		text = font.render(str(dagen), 0, (255, 255, 255))
 		sprite.blit(text, (11,28))

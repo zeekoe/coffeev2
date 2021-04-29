@@ -1,4 +1,4 @@
-echo "Run sudo apt-get install python-httplib2 vim python-lxml python-dateutil python-pysqlite2 python-mpd python-smbus libi2c-dev apach2 php5 php5-gd mpd ncmpc"
+echo "Run sudo apt-get install python3-httplib2 vim python3-lxml python3-dateutil python3-mpd python3-smbus libi2c-dev"
 echo ""
 echo "Please install pigpiod (http://abyz.co.uk/rpi/pigpio/)"
 echo ""
@@ -10,5 +10,3 @@ echo "@xset -dpms"
 echo ""
 echo "Run cp koffie_empty.db ../koffie.db"
 echo "Run cp local_settings_example.py ../local_settings.py"
-
-echo "pip install pyTelegramBotAPI"

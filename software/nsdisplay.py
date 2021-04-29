@@ -34,8 +34,8 @@ class NSDisplay:
 		
 		try:
 			self.tijden = self.avt.fetchandparse('uto')
-		except Exception, e:
-			print "Fout bij ophalen tijden: " + str(e)
+		except Exception as e:
+			print ("Fout bij ophalen tijden: " + str(e))
 			return
 		#for trein in self.tijden:
 		#	print(trein.vertrektijd.strftime("%H:%M"),trein.vertrekspoor,trein.eindbestemming,trein.vertrekvertragingtekst,trein.vertrekvertraging)
@@ -45,11 +45,11 @@ class NSDisplay:
 	def update(self):
 		self.tickcounter += 1
 		if(self.tickcounter % 120 == 0):
-			print "opnieuw ophalen" # elke 30 sec
+			print ("opnieuw ophalen") # elke 30 sec
 			try:
 				self.tijden = self.avt.fetchandparse('uto')
-			except Exception, e:
-				print "Fout bij ophalen tijden: " + str(e)
+			except Exception as e:
+				print ("Fout bij ophalen tijden: " + str(e))
 				return
 
 		

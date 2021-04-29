@@ -1,6 +1,6 @@
 import httplib2, pygame, datetime, time, os
 from random import randrange
-from pysqlite2 import dbapi2 as sqlite
+import sqlite3 as sqlite
 from kwidgets import KProgressBar
 from local_settings import coffee_set_url
 
@@ -34,7 +34,7 @@ class Koffiezetter:
 		self.coffee_set_url = coffee_set_url
 	def start(self,aantal):
 		if len(self.bezig) != 0:
-			print "Already started!"
+			print ("Already started!")
 			return
 		self.aantal_koppen = aantal
 		print("Start " + str(self.aantal_koppen))
@@ -77,19 +77,19 @@ class Koffiezetter:
 			# first character of program defines action; check what action we are doing now.
 			if self.bezig[0] == 'M':
 				n = int(self.bezig[1:])
-				print 'maal: ', n
+				print ('maal: ', n)
 				self.myhal.setMaalteller(n)
 				self.kp1.setMaxval(n)
 				if self.aantal_koppen != 5:
 					self.myhal.doGrind()
 			if self.bezig[0] == 'Z':
 				n = int(self.bezig[1:])
-				print 'zet: ',n
+				print ('zet: ',n)
 				self.myhal.setPompteller(n)
 				self.kp2.setMaxval(n)
 			if self.bezig[0] == 'S':
 				n = int(self.bezig[1:])
-				print 'wacht: ',n
+				print ('wacht: ',n)
 				self.wachttijd = n
 				self.kp2.setMaxval(n)
 
@@ -124,7 +124,7 @@ class Koffiezetter:
 
 	def boilcheck(self):
 		self.zettijd = self.myhal.getPompteller()
-		print self.bezig, self.zettijd
+		print (self.bezig, self.zettijd)
 		temperatuur = self.myhal.getTemperature()
 		# some trial & error control engineering to get water of the right temperature
 		# (temperatures are somewhat in degrees celcius, but no accurate calibration is done)
@@ -153,8 +153,8 @@ class Koffiezetter:
 					cur.close()
 					con.close()
 					os.system("sync")
-				except Exception, e:
-					print "Error writing to database: " + str(e)
+				except Exception as e:
+					print ("Error writing to database: " + str(e))
 		
 				while self.aantal_koppen > 0:
 					self.myhal.doCount() # physical counter
@@ -163,8 +163,8 @@ class Koffiezetter:
 					#resp, content = self.http.request("2.php?&aantal=" + str(self.aantal_koppen) + "&datum=" + datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
 					resp, content = self.http.request(self.coffee_set_url) # ask internet server to pull db change from machine
 
-				except Exception, e:
-					print e
+				except Exception as e:
+					print (e)
 		return self.zettijd
 	def handle_bot_message(self, message):
 		if 'cup of coffee' in message.text.lower():

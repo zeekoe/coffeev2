@@ -11,13 +11,12 @@ class vertrekkendetrein():
         self.eindbestemming = xml.find('{http://openov.nl/protocol/nsapi}EindBestemming').text
         self.treinsoort = xml.find('{http://openov.nl/protocol/nsapi}TreinSoort').text
         self.vertrekspoor = xml.find('{http://openov.nl/protocol/nsapi}VertrekSpoor')
-	if xml.find('{http://openov.nl/protocol/nsapi}VertrekVertraging') != None:
-	        self.vertrekvertraging = xml.find('{http://openov.nl/protocol/nsapi}VertrekVertraging').text
-        	self.vertrekvertragingtekst = xml.find('{http://openov.nl/protocol/nsapi}VertrekVertragingTekst').text
-	else:
-		self.vertrekvertraging = ""
-		self.vertrekvertragingtekst = ""
-		
+        if xml.find('{http://openov.nl/protocol/nsapi}VertrekVertraging') != None:
+            self.vertrekvertraging = xml.find('{http://openov.nl/protocol/nsapi}VertrekVertraging').text
+            self.vertrekvertragingtekst = xml.find('{http://openov.nl/protocol/nsapi}VertrekVertragingTekst').text
+        else:
+            self.vertrekvertraging = ""
+            self.vertrekvertragingtekst = ""
         self.treinsoort = xml.find('{http://openov.nl/protocol/nsapi}TreinSoort').text
         self.spoorwijziging = (self.vertrekspoor.attrib['wijziging'] == 'true')
         self.vertrekspoor = self.vertrekspoor.text
