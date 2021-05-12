@@ -5,7 +5,8 @@ import sys, pygame, signal, time, platform
 from sysd import SysD
 from nsdisplay import NSDisplay
 from koffiezetter import Koffiezetter
-from mpdisplay import MPDisplay
+# from mpdisplay import MPDisplay
+from kdisplay import KDisplay
 
 # autodetect if we are on the real platform, or in simulation mode
 if platform.machine() == 'armv6l':
@@ -13,20 +14,21 @@ if platform.machine() == 'armv6l':
 else:
 	from myhald import myhal
 
-
-# callback for the "Start" button. Depending on the displayed screen, the button press is redirected to the correct module.
+# callback for the "Start" button. Depending on the displayed screen, the button press is redirected to the correct
+# module.
 def startcb(gpio, level, tick):
 	print("startcb", gpio, level)
 	time.sleep(.1)  # debounce
 	level = myhal.getStartValue()
-	if (level == 0):
+	if level == 0:
 		uiState = myhal.getStateSwitch()
 		print("uiState: ", uiState)
 		if uiState == 0:
 			koffiezetter.start(myhal.getAantal())
 		elif uiState == 2:
 			try:
-				mpdc.knop()
+				# mpdc.knop()
+				pass
 			except Exception as e:
 				print("Error in mpdc-buttonpress: ", str(e))
 		elif uiState == 3:
@@ -40,50 +42,32 @@ def startcb(gpio, level, tick):
 
 myhal = myhal(startcb)
 
+kdisplay = KDisplay(myhal.getIsReal())
 
-# Ctrl+C is pressed or some other error; stop pumping and everything if something goes wrong. I implemented this quite soon while developing. ;-)
+# Ctrl+C is pressed or some other error; stop pumping and everything if something goes wrong. I implemented this
+# quite soon while developing. ;-)
 def sigint_handler(signum, frame):
 	global myhal
 	print("Interrupt! Stop the pump!")
 	myhal.stopAll()
-	mpdc.quit()
+	# mpdc.quit()
 	sys.exit(1)
 
 
 signal.signal(signal.SIGINT, sigint_handler)
 signal.signal(signal.SIGTERM, sigint_handler)
 
-pygame.init()
-if myhal.getIsReal():
-	screen = pygame.display.set_mode((480, 236), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
-else:
-	screen = pygame.display.set_mode((480, 236))
-pygame.display.set_caption('Koffie!')
-pygame.mouse.set_visible(0)
-pygame.mixer.quit()  # this saves >25% CPU...
-
-background = pygame.Surface(screen.get_size())
-background = background.convert()
-# background.fill((250, 250, 250))
-plaatje = pygame.image.load('/var/www/scherm.png')
-plaatje.convert()
-background.blit(plaatje, (0, 0))
-
-screen.blit(background, (0, 0))
-pygame.display.flip()
 mpdc = None
-sysd = SysD(background, myhal)
+sysd = SysD(kdisplay, myhal)
 
-koffiezetter = Koffiezetter(background, myhal)
-
-clock = pygame.time.Clock()
+koffiezetter = Koffiezetter(kdisplay, myhal)
 
 uiState = 0
 nsd = None
 rd = None
 
 while 1:
-	clock.tick(4)  # screen refresh rate / clock tick are fixed to 4 FPS
+	kdisplay.tick()
 	n = myhal.getAantal()
 	try:
 		koffiezetter.update()
@@ -96,30 +80,30 @@ while 1:
 		print("Waarschuwing: ", str(e))
 	if uiState == 0:
 		try:
-			background.blit(plaatje, (0, 0))
 			koffiezetter.updateUi()
 			sysd.setSubMode(0)
 		except Exception as e:
 			print("Waarschuwing: ", str(e))
 	elif uiState == 1:
 		try:
-			background.fill((250, 250, 250))
+			kdisplay.clear()
 			if n == 1:
-				if nsd == None:
-					nsd = NSDisplay(background, myhal)
-				nsd.update()
+				pass
+			# if nsd == None:
+			# 	nsd = NSDisplay(background, myhal)
+			# nsd.update()
 		except Exception as e:
 			print("Waarschuwing: ", str(e))
 	elif uiState == 2:
 		try:
-			background.fill((250, 250, 250))
-			if mpdc == None:
-				mpdc = MPDisplay(background, myhal)
-			mpdc.update()
+			pass
+		# background.fill((250, 250, 250))
+		# if mpdc == None:
+		# 	mpdc = MPDisplay(background, myhal)
+		# mpdc.update()
 		except Exception as e:
 			print("Waarschuwing: ", str(e))
 	else:
-		background.fill((250, 250, 250))
+		kdisplay.clear()
 		sysd.update()
-	screen.blit(background, (0, 0))
-	pygame.display.flip()
+	kdisplay.update()

@@ -1,12 +1,9 @@
-import httplib2, pygame, datetime, time, os
-from random import randrange
+import httplib2, datetime, os
+from kdisplay import KDisplay, TemperatureView, KoffieKorrel, ProgressCoffee, ProgressWater
 import sqlite3 as sqlite
-from kwidgets import KProgressBar
 from local_settings import coffee_set_url
 
-KOFFIEBRUIN = (102, 41, 18)
 zetkoffie = 0
-
 
 # references:
 # 1000 count units = 380 ml
@@ -20,17 +17,16 @@ class Koffiezetter:
 	wachttijd = 0
 	knipper = 0
 
-	def __init__(self, scherm1, myhal1):
+	def __init__(self, scherm1: KDisplay, myhal1):
 		self.aantal_koppen = 0
 		self.scherm = scherm1
 		self.myhal = myhal1
 		self.bezig = ''
 		self.http = httplib2.Http(timeout=2)
-		self.tempv = TemperatureView(self)
-		self.kp1 = KProgressBar(self.scherm, 26, 86, 18, 127, 1000)
-		self.kp2 = KProgressBar(self.scherm, 340, 19, 18, 127, 1000)
-		self.kk = KoffieKorrel(self.scherm, self.myhal)
-		self.pijl = Pijltjes(self.scherm, self.myhal)
+		self.tempv = TemperatureView(self.scherm.background, self)
+		self.progress_coffee = ProgressCoffee(self.scherm.background)
+		self.progress_water = ProgressWater(self.scherm.background)
+		self.kk = KoffieKorrel(self.scherm.background, self.myhal)
 		self.programma = []
 		self.coffee_set_url = coffee_set_url
 
@@ -59,20 +55,14 @@ class Koffiezetter:
 			return
 
 	def updateUi(self):  # update all UI elements
+		self.scherm.draw_background()
 		self.tempv.update()
-		self.kp1.update(self.myhal.getMaalteller())
+		self.progress_coffee.update(self.myhal.getMaalteller())
 		self.kk.update()
 		if self.zettijd > 0:
-			self.kp2.update(self.zettijd)
-			self.pijl.update(self.zettijd)
+			self.progress_water.update(self.zettijd)
 		else:
-			self.kp2.update(self.wachttijd)
-			self.pijl.update(self.wachttijd)
-
-		# Currently, water amount is still time-based. For debugging, show flow meter count on screen.
-		font = pygame.font.Font(None, 36)
-		text = font.render(str(self.myhal.getPompteller()), 0, (10, 10, 10))
-		self.scherm.blit(text, (200, 15))
+			self.progress_water.update(self.wachttijd)
 
 	def update(self):  # every 1/4 second, this routine is called
 		if len(self.programma) > 0 and self.bezig != self.programma[0]:
@@ -82,19 +72,19 @@ class Koffiezetter:
 				n = int(self.bezig[1:])
 				print('maal: ', n)
 				self.myhal.setMaalteller(n)
-				self.kp1.setMaxval(n)
+				self.progress_coffee.setMaxval(n)
 				if self.aantal_koppen != 5:
 					self.myhal.doGrind()
 			if self.bezig[0] == 'Z':
 				n = int(self.bezig[1:])
 				print('zet: ', n)
 				self.myhal.setPompteller(n)
-				self.kp2.setMaxval(n)
+				self.progress_water.setMaxval(n)
 			if self.bezig[0] == 'S':
 				n = int(self.bezig[1:])
 				print('wacht: ', n)
 				self.wachttijd = n
-				self.kp2.setMaxval(n)
+				self.progress_water.setMaxval(n)
 
 		if len(self.bezig) == 0:  # no actions left? return.
 			return
@@ -180,64 +170,3 @@ class Koffiezetter:
 		elif message.text.lower() == 'coffee':
 			self.start(1)
 
-
-class KoffieKorrel:  # drawing of random coffee dust
-	def __init__(self, scherm1, myhal1):
-		self.scherm = scherm1
-		self.myhal = myhal1
-		self.korrel = pygame.Surface((3, 3), pygame.SRCALPHA, 32)
-		pygame.draw.line(self.korrel, KOFFIEBRUIN, (0, 1), (2, 1))
-		pygame.draw.line(self.korrel, KOFFIEBRUIN, (1, 0), (1, 2))
-		self.korrel.convert_alpha()
-
-	def update(self):
-		maalteller = self.myhal.getMaalteller()
-		if (maalteller > 0):
-			self.scherm.blit(self.korrel, (100 + randrange(-5, 5), 100 + randrange(-15, 18)))
-			self.scherm.blit(self.korrel, (100 + randrange(-5, 5), 100 + randrange(-15, 18)))
-			self.scherm.blit(self.korrel, (100 + randrange(-5, 5), 100 + randrange(-15, 18)))
-
-
-class Pijltjes:  # moving arrows while pumping (needs improvement)
-	def __init__(self, scherm1, myhal1):
-		self.scherm = scherm1
-		self.myhal = myhal1
-		self.pijl = pygame.Surface((9, 9), pygame.SRCALPHA, 32)
-		pygame.draw.line(self.pijl, (0, 0, 0), (0, 5), (5, 0), 3)
-		pygame.draw.line(self.pijl, (0, 0, 0), (0, 5), (5, 9), 3)
-		self.pijl.convert_alpha()
-		self.cnt = 0
-
-	def update(self, zettijd):
-		if zettijd == 0:
-			return
-		if self.myhal.getDorst() == 0:
-			self.cnt = (self.cnt + 1) % 3
-		self.scherm.blit(self.pijl, (300 - 2 * self.cnt, 199))
-
-
-class TemperatureView:  # rectangle changes from blue to red
-	def __init__(self, koffiezetter):
-		self.koffiezetter = koffiezetter
-
-	def update(self):
-		font = pygame.font.Font(None, 36)
-		font2 = pygame.font.Font(None, 72)
-		tmp = self.koffiezetter.myhal.getTemperature()
-		red = tmp * 2.55
-		if red > 254:
-			red = 254
-		blue = 255 - red
-
-		pygame.draw.rect(self.koffiezetter.scherm, (red, 0, blue), (217, 100, 18, 50), 0)
-		if self.koffiezetter.myhal.getDorst() == 1:
-			self.koffiezetter.myhal.setLight(1)
-			text = font2.render("!", 0, (255, 10, 10))
-			self.koffiezetter.scherm.blit(text, (430, 130))
-		else:
-			self.koffiezetter.myhal.setLight(0)
-		aantal_koppen = self.koffiezetter.myhal.getAantal()
-		if len(self.koffiezetter.bezig) != 0:
-			aantal_koppen = self.koffiezetter.aantal_koppen
-		text = font2.render(str(aantal_koppen), 0, (255, 255, 255))
-		self.koffiezetter.scherm.blit(text, (105, 156))
