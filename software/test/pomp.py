@@ -8,8 +8,8 @@ globalpi.write(18,1)
 
 
 def gpiopompcb(gpio, level, tick):
-	print gpio, level, tick
-	
+	print (gpio, level, tick)
+
 
 globalpi.set_pull_up_down(31, pigpio.PUD_UP)
 globalpi.callback(31, pigpio.EITHER_EDGE, gpiopompcb)
