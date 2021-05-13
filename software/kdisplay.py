@@ -43,6 +43,29 @@ class KDisplay:
 		self.clock.tick(4)  # screen refresh rate / clock tick are fixed to 4 FPS
 		pass
 
+	def get_key(self):
+		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN:
+				print("Key: ", event.key)
+				if event.key == pygame.K_1:
+					return '1'
+				elif event.key == pygame.K_2:
+					return '2'
+				elif event.key == pygame.K_3:
+					return '3'
+				elif event.key == pygame.K_4:
+					return '4'
+				elif event.key == pygame.K_5:
+					return '5'
+				elif event.key == pygame.K_q:
+					return 'q'
+				elif event.key == pygame.K_w:
+					return 'w'
+				elif event.key == pygame.K_d:
+					return 'd'
+				elif event.key == pygame.K_SPACE:
+					return ' '
+
 
 class KoffieKorrel:  # drawing of random coffee dust
 	def __init__(self, scherm1, myhal1):

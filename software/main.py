@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import sys, pygame, signal, time, platform
+import sys, signal, time, platform
 
 # load modules
 from sysd import SysD
@@ -21,7 +21,7 @@ def startcb(gpio, level, tick):
 	time.sleep(.1)  # debounce
 	level = myhal.getStartValue()
 	if level == 0:
-		uiState = myhal.getStateSwitch()
+		uiState = myhal.getStateSwitch(kdisplay)
 		print("uiState: ", uiState)
 		if uiState == 0:
 			koffiezetter.start(myhal.getAantal())
@@ -75,7 +75,7 @@ while 1:
 		myhal.stopAll()
 		print("Error in koffiezetter-update, stop everything: ", str(e))
 	try:
-		uiState = myhal.getStateSwitch()  # find display mode (uiState) from buttons
+		uiState = myhal.getStateSwitch(kdisplay)  # find display mode (uiState) from buttons
 	except Exception as e:
 		print("Waarschuwing: ", str(e))
 	if uiState == 0:

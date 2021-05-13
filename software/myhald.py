@@ -1,7 +1,6 @@
 import time, pygame
-
+from kdisplay import KDisplay
 maalteller = 0
-gpiostate = {0: 0}
 pompteller = 0
 
 
@@ -10,7 +9,6 @@ class myhal:
 		self.dummyboil = 0
 		self.dummypump = 0
 		self.dummygrind = 0
-		gpiostate = {17: 0, 27: 0, 22: 0, 4: 0, 0: 0}
 		self.cbf = startcb
 		self.aantalBuffer = 2
 		self.s1Buffer = 1
@@ -90,26 +88,24 @@ class myhal:
 	def getStartValue(self):
 		return 0
 
-	def getStateSwitch(self):
-		for event in pygame.event.get():
-			if event.type == pygame.KEYDOWN:
-				print("Key: ", event.key)
-				if event.key == pygame.K_1:
-					self.aantalBuffer = 1
-				elif event.key == pygame.K_2:
-					self.aantalBuffer = 2
-				elif event.key == pygame.K_3:
-					self.aantalBuffer = 3
-				elif event.key == pygame.K_4:
-					self.aantalBuffer = 4
-				elif event.key == pygame.K_5:
-					self.aantalBuffer = 5
-				elif event.key == pygame.K_q:
-					self.s1Buffer = abs(self.s1Buffer - 1)
-				elif event.key == pygame.K_w:
-					self.s2Buffer = abs(self.s2Buffer - 1)
-				elif event.key == pygame.K_d:
-					self.dBuffer = abs(self.dBuffer - 1)
-				elif event.key == pygame.K_SPACE:
-					self.cbf(0, 0, 0)
+	def getStateSwitch(self, display: KDisplay):
+		key = display.get_key()
+		if key == '1':
+			self.aantalBuffer = 1
+		elif key == '2':
+			self.aantalBuffer = 2
+		elif key == '3':
+			self.aantalBuffer = 3
+		elif key == '4':
+			self.aantalBuffer = 4
+		elif key == '5':
+			self.aantalBuffer = 5
+		elif key == 'q':
+			self.s1Buffer = abs(self.s1Buffer - 1)
+		elif key == 'w':
+			self.s2Buffer = abs(self.s2Buffer - 1)
+		elif key == 'd':
+			self.dBuffer = abs(self.dBuffer - 1)
+		elif key == ' ':
+			self.cbf(0, 0, 0)
 		return self.s1Buffer + 2 * self.s2Buffer
