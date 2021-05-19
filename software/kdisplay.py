@@ -76,8 +76,11 @@ class ProgressCoffee:
 
 	def update(self, param):
 		self.window.addstr("koffie: ")
-		self.window.addstr(str(int(100 * param / self.max_val)))
-		self.window.addstr("\n")
+		if self.max_val == 0:
+			s = '-'
+		else:
+			s = str(int(100 * param / self.max_val))
+		self.window.addstr(s + "\n")
 		pass
 
 	def setMaxval(self, max_val):
@@ -93,8 +96,11 @@ class ProgressWater:
 
 	def update(self, param):
 		self.window.addstr("water: ")
-		self.window.addstr(str(int(100 * param / self.max_val)))
-		self.window.addstr("\n")
+		if self.max_val == 0:
+			s = '-'
+		else:
+			s = str(int(100 * param / self.max_val))
+		self.window.addstr(s + "\n")
 		pass
 
 	def setMaxval(self, max_val):
