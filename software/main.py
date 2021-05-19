@@ -50,6 +50,7 @@ def sigint_handler(signum, frame):
 	global myhal
 	print("Interrupt! Stop the pump!")
 	myhal.stopAll()
+	kdisplay.shutdown()
 	# mpdc.quit()
 	sys.exit(1)
 
@@ -73,6 +74,7 @@ while 1:
 		koffiezetter.update()
 	except Exception as e:
 		myhal.stopAll()
+		kdisplay.shutdown()
 		print("Error in koffiezetter-update, stop everything: ", str(e))
 	try:
 		uiState = myhal.getStateSwitch(kdisplay)  # find display mode (uiState) from buttons
@@ -104,6 +106,10 @@ while 1:
 		except Exception as e:
 			print("Waarschuwing: ", str(e))
 	else:
-		kdisplay.clear()
-		sysd.update()
+		try:
+			kdisplay.clear()
+			sysd.update()
+		except Exception as e:
+			kdisplay.shutdown()
+
 	kdisplay.update()

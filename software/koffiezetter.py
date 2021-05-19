@@ -55,14 +55,17 @@ class Koffiezetter:
 			return
 
 	def updateUi(self):  # update all UI elements
-		self.scherm.draw_background()
-		self.tempv.update()
-		self.progress_coffee.update(self.myhal.getMaalteller())
-		self.kk.update()
-		if self.zettijd > 0:
-			self.progress_water.update(self.zettijd)
-		else:
-			self.progress_water.update(self.wachttijd)
+		try:
+			self.scherm.draw_background()
+			self.tempv.update()
+			self.progress_coffee.update(self.myhal.getMaalteller())
+			self.kk.update()
+			if self.zettijd > 0:
+				self.progress_water.update(self.zettijd)
+			else:
+				self.progress_water.update(self.wachttijd)
+		except Exception as e:
+			self.scherm.shutdown()
 
 	def update(self):  # every 1/4 second, this routine is called
 		if len(self.programma) > 0 and self.bezig != self.programma[0]:

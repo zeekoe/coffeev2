@@ -38,7 +38,7 @@ class myhal:
 		return self.aantalBuffer
 
 	def setLight(self, value):
-		print("light: " + str(value))
+		pass
 
 	def doCount(self):
 		print("counting")
