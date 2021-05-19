@@ -3,9 +3,7 @@ import sys, signal, time, platform
 
 # load modules
 from sysd import SysD
-from nsdisplay import NSDisplay
 from koffiezetter import Koffiezetter
-# from mpdisplay import MPDisplay
 from kdisplay import KDisplay
 
 # autodetect if we are on the real platform, or in simulation mode

@@ -1,7 +1,6 @@
 import smbus
 import pigpio
 import time
-import os
 
 maalteller = 0
 gpiostate = {0: 0}

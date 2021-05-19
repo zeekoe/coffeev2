@@ -1,5 +1,4 @@
-import httplib2, time, afvalwijzer, socket, os, datetime
-from npolive import NPOLive
+import httplib2, time, socket, os
 
 
 class SysD:

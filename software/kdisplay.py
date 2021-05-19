@@ -1,8 +1,6 @@
-from random import randrange
 KOFFIEBRUIN = (102, 41, 18)
 
 import curses
-from curses.textpad import Textbox, rectangle
 import time, datetime
 
 
