@@ -174,5 +174,5 @@ class myhal:
 		self.stopPump()
 		self.stopGrind()
 
-	def getStateSwitch(self):
+	def getStateSwitch(self, display):
 		return self.pi.read(27) * 2 + self.pi.read(17)
