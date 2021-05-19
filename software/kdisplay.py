@@ -14,7 +14,7 @@ class KDisplay:
 		curses.start_color()
 		self.stdscr.clear()
 		self.stdscr.refresh()
-		self.background = curses.newwin(6, 22, 2, 1)
+		self.background = self.stdscr # TODO find out why curses.newwin fails
 		self.stdscr.refresh()
 
 		self.background.nodelay(True)
