@@ -8,6 +8,8 @@ import time, datetime
 
 class KDisplay:
 	def __init__(self, isReal):
+		print("init kdisplay")
+		time.sleep(1)
 		self.stdscr = curses.initscr()
 		curses.start_color()
 		self.stdscr.clear()

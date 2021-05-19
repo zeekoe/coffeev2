@@ -1,4 +1,4 @@
-import time, pygame
+import time
 from kdisplay import KDisplay
 maalteller = 0
 pompteller = 0
