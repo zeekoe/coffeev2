@@ -81,7 +81,6 @@ while 1:
 	if uiState == 0:
 		try:
 			koffiezetter.updateUi()
-			sysd.setSubMode(0)
 		except Exception as e:
 			print("Waarschuwing: ", str(e))
 	elif uiState == 1:
