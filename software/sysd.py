@@ -9,6 +9,8 @@ class SysD:
 		aantal = self.myhal.getAantal()
 		self.kdisplay.text_line("1. Muziek fixen")
 		self.kdisplay.text_line("2. Koffiemachine uitzetten")
+		self.kdisplay.text_line("3. Woonkamerversterker uit")
+		self.kdisplay.text_line("4. Woonkamerversterker aan")
 		self.kdisplay.text_line(str(aantal))
 	def doAction(self):
 		aantal = self.myhal.getAantal()
@@ -18,3 +20,8 @@ class SysD:
 				print ("shutting down")
 				os.system("sync")
 				os.system("sudo shutdown -h now")
+		if(aantal == 3):
+				os.system("wget -O - http://192.168.1.120:8280/amp/off")
+		if(aantal == 4):
+				os.system("wget -O - http://192.168.1.120:8280/amp/on")
+
