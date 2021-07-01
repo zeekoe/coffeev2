@@ -2,8 +2,10 @@ import httplib2, datetime, os
 from kdisplay import KDisplay, TemperatureView, KoffieKorrel, ProgressCoffee, ProgressWater
 import sqlite3 as sqlite
 from local_settings import coffee_set_url
+import time
 
 zetkoffie = 0
+
 
 # references:
 # 1000 count units = 380 ml
@@ -29,6 +31,7 @@ class Koffiezetter:
 		self.kk = KoffieKorrel(self.scherm.background, self.myhal)
 		self.programma = []
 		self.coffee_set_url = coffee_set_url
+		self.do_pre_heat = 1
 
 	def start(self, aantal):
 		if len(self.bezig) != 0:
@@ -68,6 +71,7 @@ class Koffiezetter:
 			self.scherm.shutdown()
 
 	def update(self):  # every 1/4 second, this routine is called
+		self.pre_heat()
 		if len(self.programma) > 0 and self.bezig != self.programma[0]:
 			self.bezig = self.programma[0]
 			# first character of program defines action; check what action we are doing now.
@@ -117,6 +121,21 @@ class Koffiezetter:
 			self.wachttijd -= 1
 			if self.wachttijd < 1:
 				self.programma.pop(0)  # next script item
+
+	def pre_heat(self):
+		if self.do_pre_heat != 1:
+			return
+		hour = time.localtime().tm_hour
+		if hour not in (6, 7, 8, 9, 13, 14):
+			self.do_pre_heat = 0
+			return
+		temperatuur = self.myhal.getTemperature()
+
+		if temperatuur < 80:
+			self.myhal.doBoil()
+		else:
+			self.myhal.stopBoil()
+			self.do_pre_heat = 0
 
 	def boilcheck(self):
 		self.zettijd = self.myhal.getPompteller()
@@ -172,4 +191,3 @@ class Koffiezetter:
 			self.start(2)
 		elif message.text.lower() == 'coffee':
 			self.start(1)
-
