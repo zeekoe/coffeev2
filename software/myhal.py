@@ -57,6 +57,8 @@ class myhal:
 		self.pi.set_pull_up_down(23, pigpio.PUD_UP)  # reserved
 		self.pi.set_pull_up_down(4, pigpio.PUD_UP)
 		self.pi.set_pull_up_down(31, pigpio.PUD_UP)
+		self.force_light = False
+		self.just_started = True
 
 		gpiostate = {17: self.pi.read(17), 27: self.pi.read(27), 22: self.pi.read(22), 4: self.pi.read(4), 0: 0}
 
@@ -123,17 +125,25 @@ class myhal:
 		return aantal
 
 	def setLight(self, value):
-		if (value == 1):
+		if value == 1 or self.force_light or self.just_started:
 			self.bus.write_byte_data(self.address, 1, 1)
 		else:
 			self.bus.write_byte_data(self.address, 1, 0)
+
+	def uiExtra(self):
+		ret = "X: "
+		if self.force_light:
+			ret = ret + "F"
+		if self.just_started:
+			ret = ret + "J"
+		return ret
 
 	def doCount(self):
 		self.bus.write_byte_data(self.address, 0, 1)
 		time.sleep(.5)
 
 	def doBoil(self):
-		if (self.showtemp == 0):
+		if self.showtemp == 0:
 			self.showtemp = 1
 			self.bus.write_byte_data(self.address, 2, 1)
 		self.pi.write(15, 0)
@@ -174,4 +184,11 @@ class myhal:
 		self.stopGrind()
 
 	def getStateSwitch(self, display):
-		return self.pi.read(27) * 2 + self.pi.read(17)
+		state = self.pi.read(27) * 2 + self.pi.read(17)
+		if state == 0:
+			self.just_started = False
+		return state
+
+	def shutdown(self):
+		self.force_light = True
+		self.setLight(1)

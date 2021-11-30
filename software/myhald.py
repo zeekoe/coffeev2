@@ -12,8 +12,8 @@ class myhal:
 		self.cbf = startcb
 		self.aantalBuffer = 2
 		self.s1Buffer = 1
-		self.s2Buffer = 0
-		self.dBuffer = 1
+		self.s2Buffer = 1
+		self.dBuffer = 0
 
 	def getIsReal(self):
 		return 0
@@ -39,6 +39,9 @@ class myhal:
 
 	def setLight(self, value):
 		pass
+
+	def uiExtra(self):
+		return ""
 
 	def doCount(self):
 		print("counting")
@@ -109,3 +112,6 @@ class myhal:
 		elif key == ' ':
 			self.cbf(0, 0, 0)
 		return self.s1Buffer + 2 * self.s2Buffer
+
+	def shutdown(self):
+		pass
