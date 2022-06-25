@@ -20,6 +20,7 @@ class SysD:
 				os.system("sudo service snapclient restart")
 		if(aantal == 2):
 				print ("shutting down")
+				self.myhal.shutdown()
 				os.system("sync")
 				os.system("sudo shutdown -h now")
 				self.myhal.shutdown()
