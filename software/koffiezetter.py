@@ -31,7 +31,7 @@ class Koffiezetter:
 		self.kk = KoffieKorrel(self.scherm.background, self.myhal)
 		self.programma = []
 		self.coffee_set_url = coffee_set_url
-		self.do_pre_heat = 1
+		self.do_pre_heat = 0
 
 	def start(self, aantal):
 		if len(self.bezig) != 0:
