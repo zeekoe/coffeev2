@@ -8,6 +8,7 @@ class SysD:
 
 	def update(self):
 		aantal = self.myhal.getAantal()
+
 		self.kdisplay.text_line("1. Muziek fixen")
 		self.kdisplay.text_line("2. Koffiemachine uitzetten")
 		self.kdisplay.text_line("3. Woonkamerversterker uit")

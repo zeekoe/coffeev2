@@ -15,12 +15,10 @@ else:
 # callback for the "Start" button. Depending on the displayed screen, the button press is redirected to the correct
 # module.
 def startcb(gpio, level, tick):
-	print("startcb", gpio, level)
 	time.sleep(.1)  # debounce
 	level = myhal.getStartValue()
 	if level == 0:
 		uiState = myhal.getStateSwitch(kdisplay)
-		print("uiState: ", uiState)
 		if uiState == 0:
 			koffiezetter.start(myhal.getAantal())
 		elif uiState == 2:

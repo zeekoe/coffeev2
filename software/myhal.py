@@ -14,7 +14,6 @@ pomptik = 0
 
 def gpiocb(gpio, level, tick):
 	global gpiostate
-	print("gpiocb", gpio, level)
 	gpiostate[gpio] = level
 
 
@@ -26,7 +25,6 @@ def gpiomaalcb(gpio, level, tick):  # call back for grinder pulse
 			maaltijd.append((tick - maaltik) / 1000)
 			if len(maaltijd) > 4:
 				maaltijd.pop(0)
-			print(maaltijd)
 		maaltik = tick
 
 
@@ -38,7 +36,6 @@ def gpiopompcb(gpio, level, tick):  # call back for flow meter (water pump) puls
 			pomptijd.append((tick - pomptik) / 1000)
 			if len(pomptijd) > 2:
 				pomptijd.pop(0)
-			print(pomptijd)
 		pomptik = tick
 
 

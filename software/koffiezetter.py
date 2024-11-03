@@ -38,7 +38,6 @@ class Koffiezetter:
 			print("Already started!")
 			return
 		self.aantal_koppen = aantal
-		print("Start " + str(self.aantal_koppen))
 		# AutoBaristaScripts defined; Z = add hot water; M = grind; S = sleep
 		if self.aantal_koppen == 1:  # 2274 is the first cup of 175ml instead of 240ml
 			self.programma = ['Z6', 'M107', 'Z50', 'S60', 'Z115']  # 50 + 170 = 220
@@ -77,19 +76,16 @@ class Koffiezetter:
 			# first character of program defines action; check what action we are doing now.
 			if self.bezig[0] == 'M':
 				n = int(self.bezig[1:])
-				print('maal: ', n)
 				self.myhal.setMaalteller(n)
 				self.progress_coffee.setMaxval(n)
 				if self.aantal_koppen != 5:
 					self.myhal.doGrind()
 			if self.bezig[0] == 'Z':
 				n = int(self.bezig[1:])
-				print('zet: ', n)
 				self.myhal.setPompteller(n)
 				self.progress_water.setMaxval(n)
 			if self.bezig[0] == 'S':
 				n = int(self.bezig[1:])
-				print('wacht: ', n)
 				self.wachttijd = n
 				self.progress_water.setMaxval(n)
 
@@ -139,7 +135,6 @@ class Koffiezetter:
 
 	def boilcheck(self):
 		self.zettijd = self.myhal.getPompteller()
-		print(self.bezig, self.zettijd)
 		temperatuur = self.myhal.getTemperature()
 		# some trial & error control engineering to get water of the right temperature
 		# (temperatures are somewhat in degrees celcius, but no accurate calibration is done)
