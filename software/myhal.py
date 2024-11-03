@@ -165,9 +165,11 @@ class myhal:
 
 	def getDorst(self):
 		global pompteller
-		water_low = self.pi.read(4)
+		# work with a non-magnetic water thingy; just by pomptijd
+		# water_low = self.pi.read(4)
 		pomptijd = self.getPomptijd()
-		if (pomptijd > 60 or pompteller == 0) and water_low == 1:
+		# if (pomptijd > 60 or pompteller == 0) and water_low == 1:
+		if pomptijd > 60:
 			return 1
 		else:
 			return 0
