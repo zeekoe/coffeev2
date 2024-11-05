@@ -139,13 +139,13 @@ class Koffiezetter:
 		# some trial & error control engineering to get water of the right temperature
 		# (temperatures are somewhat in degrees celcius, but no accurate calibration is done)
 		if (self.zettijd > 0):
-			if (temperatuur > 88 or self.zettijd < 30) and self.myhal.getDorst() == 0:
+			if (temperatuur > 86 or self.zettijd < 30) and self.myhal.getDorst() == 0:
 				self.myhal.doPump()
 				if self.zettijd > 25:
 					self.myhal.doBoil()
 			else:
 				self.myhal.stopPump()
-				if (temperatuur < 93 and self.zettijd > 25):
+				if (temperatuur < 91 and self.zettijd > 25):
 					self.myhal.doBoil()
 				else:
 					self.myhal.stopBoil()
