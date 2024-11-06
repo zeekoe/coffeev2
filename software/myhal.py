@@ -10,6 +10,7 @@ maaltijd = []
 maaltik = 0
 pomptijd = []
 pomptik = 0
+dorst = 0
 
 
 def gpiocb(gpio, level, tick):
@@ -152,9 +153,13 @@ class myhal:
 		self.pi.write(15, 1)
 
 	def doPump(self):
+		global pomptijd
+		pomptijd = []
 		self.pi.write(18, 0)
 
 	def stopPump(self):
+		global pomptijd
+		pomptijd = []
 		self.pi.write(18, 1)
 
 	def doGrind(self):
@@ -164,15 +169,15 @@ class myhal:
 		self.pi.write(14, 1)
 
 	def getDorst(self):
-		global pompteller
+		global pompteller, dorst
 		# work with a non-magnetic water thingy; just by pomptijd
 		# water_low = self.pi.read(4)
-		pomptijd = self.getPomptijd()
-		# if (pomptijd > 60 or pompteller == 0) and water_low == 1:
-		if pomptijd > 60:
-			return 1
-		else:
-			return 0
+		# if (self.getPomptijd() > 60 or pompteller == 0) and water_low == 1:
+		if self.getPomptijd() > 60:
+			dorst = 1
+			global pomptijd
+			pomptijd = []
+		return dorst
 
 	def getTemperature(self):
 		return self.bus.read_byte_data(self.address, 1)
@@ -182,7 +187,14 @@ class myhal:
 		self.stopPump()
 		self.stopGrind()
 
+	def resetDorst(self):
+		global dorst
+		dorst = 0
+
 	def getStateSwitch(self, display):
+		global dorst
+		if dorst == 1:
+			return 1337
 		state = self.pi.read(27) * 2 + self.pi.read(17)
 		if state == 0:
 			self.just_started = False
