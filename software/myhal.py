@@ -1,6 +1,8 @@
 import smbus
 import pigpio
 import time
+import datetime
+import os
 
 maalteller = 0
 gpiostate = {0: 0}
@@ -34,11 +36,26 @@ def gpiopompcb(gpio, level, tick):  # call back for flow meter (water pump) puls
 	if level == 0 and pompteller > 0:
 		pompteller -= 1
 		if pomptik != 0:
+			log_pomptijd(pomptijd)
+			print(pomptijd)
 			pomptijd.append((tick - pomptik) / 1000)
 			if len(pomptijd) > 2:
 				pomptijd.pop(0)
 		pomptik = tick
 
+def log_pomptijd(pomptijd):
+    # Get the current date and time
+    current_time = datetime.datetime.now()
+
+    # Prepare the log entry
+    log_entry = f"{current_time}: {pomptijd}\n"
+
+    # Define the file path
+    file_path = os.path.expanduser("~/pomplog.txt")
+
+    # Open the file for appending and write the log entry
+    with open(file_path, "a") as log_file:
+        log_file.write(log_entry)
 
 class myhal:
 	def __init__(self, startcb):
@@ -173,9 +190,12 @@ class myhal:
 		# work with a non-magnetic water thingy; just by pomptijd
 		# water_low = self.pi.read(4)
 		# if (self.getPomptijd() > 60 or pompteller == 0) and water_low == 1:
-		if self.getPomptijd() > 60:
-			dorst = 1
+		if self.getPomptijd() > 80:
+			log_pomptijd("dorst")
+			log_pomptijd(self.getPomptijd())
 			global pomptijd
+			log_pomptijd(pomptijd)
+			dorst = 1
 			pomptijd = []
 		return dorst
 

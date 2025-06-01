@@ -145,7 +145,7 @@ class Koffiezetter:
 					self.myhal.doBoil()
 			else:
 				self.myhal.stopPump()
-				if (temperatuur < 91 and self.zettijd > 25):
+				if (temperatuur < 88 and self.zettijd > 20):
 					self.myhal.doBoil()
 				else:
 					self.myhal.stopBoil()
