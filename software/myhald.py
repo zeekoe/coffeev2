@@ -113,8 +113,5 @@ class myhal:
 			self.cbf(0, 0, 0)
 		return self.s1Buffer + 2 * self.s2Buffer
 
-	def resetDorst(self):
-		pass
-
 	def shutdown(self):
 		pass

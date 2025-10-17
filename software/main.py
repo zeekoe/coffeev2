@@ -19,9 +19,7 @@ def startcb(gpio, level, tick):
 	level = myhal.getStartValue()
 	if level == 0:
 		uiState = myhal.getStateSwitch(kdisplay)
-		if uiState == 1337:
-			myhal.resetDorst()
-		elif uiState == 0:
+		if uiState == 0:
 			koffiezetter.start(myhal.getAantal())
 		elif uiState == 2:
 			try:

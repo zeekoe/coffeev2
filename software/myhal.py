@@ -1,8 +1,6 @@
 import smbus
 import pigpio
 import time
-import datetime
-import os
 
 maalteller = 0
 gpiostate = {0: 0}
@@ -12,7 +10,6 @@ maaltijd = []
 maaltik = 0
 pomptijd = []
 pomptik = 0
-dorst = 0
 
 
 def gpiocb(gpio, level, tick):
@@ -36,26 +33,11 @@ def gpiopompcb(gpio, level, tick):  # call back for flow meter (water pump) puls
 	if level == 0 and pompteller > 0:
 		pompteller -= 1
 		if pomptik != 0:
-			log_pomptijd(pomptijd)
-			print(pomptijd)
 			pomptijd.append((tick - pomptik) / 1000)
 			if len(pomptijd) > 2:
 				pomptijd.pop(0)
 		pomptik = tick
 
-def log_pomptijd(pomptijd):
-    # Get the current date and time
-    current_time = datetime.datetime.now()
-
-    # Prepare the log entry
-    log_entry = f"{current_time}: {pomptijd}\n"
-
-    # Define the file path
-    file_path = os.path.expanduser("~/pomplog.txt")
-
-    # Open the file for appending and write the log entry
-    with open(file_path, "a") as log_file:
-        log_file.write(log_entry)
 
 class myhal:
 	def __init__(self, startcb):
@@ -170,13 +152,9 @@ class myhal:
 		self.pi.write(15, 1)
 
 	def doPump(self):
-		global pomptijd
-		pomptijd = []
 		self.pi.write(18, 0)
 
 	def stopPump(self):
-		global pomptijd
-		pomptijd = []
 		self.pi.write(18, 1)
 
 	def doGrind(self):
@@ -186,18 +164,13 @@ class myhal:
 		self.pi.write(14, 1)
 
 	def getDorst(self):
-		global pompteller, dorst
-		# work with a non-magnetic water thingy; just by pomptijd
-		# water_low = self.pi.read(4)
-		# if (self.getPomptijd() > 60 or pompteller == 0) and water_low == 1:
-		if self.getPomptijd() > 80:
-			log_pomptijd("dorst")
-			log_pomptijd(self.getPomptijd())
-			global pomptijd
-			log_pomptijd(pomptijd)
-			dorst = 1
-			pomptijd = []
-		return dorst
+		global pompteller
+		water_low = self.pi.read(4)
+		pomptijd = self.getPomptijd()
+		if (pomptijd > 60 or pompteller == 0) and water_low == 1:
+			return 1
+		else:
+			return 0
 
 	def getTemperature(self):
 		return self.bus.read_byte_data(self.address, 1)
@@ -207,14 +180,7 @@ class myhal:
 		self.stopPump()
 		self.stopGrind()
 
-	def resetDorst(self):
-		global dorst
-		dorst = 0
-
 	def getStateSwitch(self, display):
-		global dorst
-		if dorst == 1:
-			return 1337
 		state = self.pi.read(27) * 2 + self.pi.read(17)
 		if state == 0:
 			self.just_started = False
